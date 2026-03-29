@@ -1,0 +1,156 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id           String           @id @default(cuid())
+  username     String           @unique
+  passwordHash String
+  role         String           @default("EMPLOYEE")
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  profile      EmployeeProfile?
+}
+
+model EmployeeProfile {
+  id             String          @id @default(cuid())
+  userId         String          @unique
+  fullName       String
+  jobTitle       String
+  phoneNumber    String
+  nationalId     String          @unique
+  address        String
+  dateOfHiring   DateTime
+  hourlyRate     Float
+  profilePhoto   String?
+  idPhoto        String?
+  healthCertificate String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  attendances    Attendance[]
+  documents      Document[]
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  leaveRequests  LeaveRequest[]
+  medicalReports MedicalReport[]
+  penalties      PenaltyNote[]
+  payrollRecords Payroll[]
+}
+
+model Document {
+  id         String          @id @default(cuid())
+  employeeId String
+  title      String
+  type       String
+  fileUrl    String
+  uploaderId String
+  createdAt  DateTime        @default(now())
+  employee   EmployeeProfile @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+}
+
+model Attendance {
+  id           String          @id @default(cuid())
+  employeeId   String
+  date         DateTime        @default(now())
+  checkInTime  DateTime
+  checkOutTime DateTime?
+  totalHours   Float?
+  checkInLat   Float?
+  checkInLng   Float?
+  checkOutLat  Float?
+  checkOutLng  Float?
+  createdAt    DateTime        @default(now())
+  employee     EmployeeProfile @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+}
+
+model LeaveRequest {
+  id         String          @id @default(cuid())
+  employeeId String
+  type       String
+  startDate  DateTime
+  endDate    DateTime
+  status     String          @default("PENDING")
+  adminId    String?
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+  employee   EmployeeProfile @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+}
+
+model MedicalReport {
+  id         String          @id @default(cuid())
+  employeeId String
+  leaveId    String?
+  title      String
+  fileUrl    String
+  uploaderId String
+  createdAt  DateTime        @default(now())
+  employee   EmployeeProfile @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+}
+
+model PenaltyNote {
+  id          String          @id @default(cuid())
+  employeeId  String
+  type        String
+  description String
+  date        DateTime        @default(now())
+  adminId     String
+  createdAt   DateTime        @default(now())
+  employee    EmployeeProfile @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+}
+
+model DailyFinancial {
+  id         String    @id @default(cuid())
+  date       DateTime  @unique @default(now())
+  totalSales Float     @default(0)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  expenses   Expense[]
+}
+
+model Expense {
+  id               String         @id @default(cuid())
+  dailyFinancialId String
+  amount           Float
+  description      String
+  category         String         @default("other")
+  invoiceNumber    String?
+  receiptUrl       String?
+  createdAt        DateTime       @default(now())
+  dailyFinancial   DailyFinancial @relation(fields: [dailyFinancialId], references: [id], onDelete: Cascade)
+}
+
+model PurchaseInvoice {
+  id            String   @id @default(cuid())
+  date          DateTime @default(now())
+  invoiceNumber String?
+  category      String
+  amount        Float
+  fileUrl       String
+  uploaderId    String
+  notes         String?
+  createdAt     DateTime @default(now())
+}
+
+model Payroll {
+  id            String          @id @default(cuid())
+  employeeId    String
+  month         Int
+  year          Int
+  totalHours    Float
+  hourlyRate    Float
+  netAmount     Float
+  bonus         Float           @default(0)
+  deductions    Float           @default(0)
+  advance       Float           @default(0)
+  paymentDate   DateTime        @default(now())
+  adminId       String
+  status        String          @default("PAID")
+  notes         String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  employee      EmployeeProfile @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+}

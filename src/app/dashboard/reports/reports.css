@@ -1,0 +1,43 @@
+.reports-page {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.filter-card {
+  background: var(--surface);
+  border-left: 4px solid var(--primary);
+}
+
+.report-result {
+  min-height: 400px;
+}
+
+.financial-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.report-table-wrapper {
+  overflow-x: auto;
+}
+
+.text-success { color: var(--success); }
+.text-danger { color: var(--danger); }
+
+@media print {
+  .app-sidebar, .app-header, .filter-card, .btn-primary {
+    display: none !important;
+  }
+  .app-layout, .app-main, .app-content {
+    display: block !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+  .card {
+    box-shadow: none !important;
+    border: none !important;
+  }
+  .report-result {
+    border: none !important;
+  }
+}

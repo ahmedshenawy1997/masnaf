@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "RestoHR - Management System",
-  description: "Restaurant Employee Management System",
+  title: "RestoHR - نظام إدارة الموارد البشرية",
+  description: "نظام متكامل لإدارة موظفي المطاعم والمنشآت",
 };
 
 export default function RootLayout({
@@ -25,10 +25,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable}`}
-      >
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <AuthProvider>
           <LanguageProvider>
             {children}

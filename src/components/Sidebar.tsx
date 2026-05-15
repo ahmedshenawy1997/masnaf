@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Users, FileText, Settings, LogOut, FileImage, DollarSign, Clock } from 'lucide-react';
+import { Home, Users, CalendarDays, DollarSign, BarChart2, LogOut, User, X } from 'lucide-react';
 import { signOut, useSession } from 'next-auth/react';
 import { useLanguage } from '@/lib/LanguageContext';
 import './Sidebar.css';
@@ -17,53 +17,67 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
     if (role === 'SUPERADMIN' || role === 'ADMIN') {
       fetch('/api/leaves/pending-count')
         .then(res => res.json())
-        .then(data => {
-          if (data.count) setPendingLeaves(data.count);
-        })
-        .catch(console.error);
+        .then(data => { if (data.count) setPendingLeaves(data.count); })
+        .catch(() => {});
     }
   }, [role, pathname]);
 
-  const menuItems: any[] = [
-    { label: t('dashboard'), icon: Home, href: '/dashboard' },
+  type MenuItem = {
+    label: string;
+    icon: React.ElementType;
+    href: string;
+    exact?: boolean;
+    badge?: number;
+  };
+
+  const adminItems: MenuItem[] = [
+    { label: t('dashboard'),          icon: Home,         href: '/dashboard',            exact: true },
+    { label: t('employees'),          icon: Users,        href: '/dashboard/employees' },
+    { label: t('leaves'),             icon: CalendarDays, href: '/dashboard/leaves',     badge: pendingLeaves },
+    { label: t('payroll_management'), icon: DollarSign,   href: '/dashboard/payroll' },
+    { label: t('reports'),            icon: BarChart2,    href: '/dashboard/reports' },
   ];
 
-  if (role === 'SUPERADMIN' || role === 'ADMIN') {
-    menuItems.push(
-      { label: t('employees'), icon: Users, href: '/dashboard/employees' },
-      { label: t('leaves'), icon: FileImage, href: '/dashboard/leaves', badge: pendingLeaves },
-      { label: t('payroll_management'), icon: DollarSign, href: '/dashboard/payroll' },
-      { label: t('reports'), icon: FileText, href: '/dashboard/reports' }
-    );
-  } else {
-    if (session?.user?.id) {
-      menuItems.push(
-        { label: t('personal_info'), icon: Users, href: `/dashboard/employees/${session.user.id}` }
-      );
-    }
-  }
+  const employeeItems: MenuItem[] = [
+    { label: t('dashboard'),     icon: Home, href: '/dashboard', exact: true },
+    { label: t('personal_info'), icon: User, href: `/dashboard/employees/${session?.user?.id}` },
+  ];
+
+  const menuItems = (role === 'SUPERADMIN' || role === 'ADMIN') ? adminItems : employeeItems;
+
+  const isActive = (href: string, exact?: boolean) =>
+    exact ? pathname === href : (pathname === href || pathname.startsWith(href + '/'));
 
   return (
     <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
+      {/* Header */}
       <div className="sidebar-header">
-        <h1 className="sidebar-title">RestoHR</h1>
-        <button className="sidebar-close" onClick={onClose}>×</button>
+        <div className="sidebar-brand">
+          <div className="sidebar-brand-icon">R</div>
+          <span className="sidebar-title">RestoHR</span>
+        </div>
+        <button className="sidebar-close" onClick={onClose} aria-label="Close sidebar">
+          <X size={18} />
+        </button>
       </div>
 
+      {/* Nav */}
       <nav className="sidebar-nav">
         <ul>
           {menuItems.map((item) => {
             const Icon = item.icon;
-            const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
+            const active = isActive(item.href, item.exact);
             return (
               <li key={item.href}>
-                <Link href={item.href} className={`sidebar-link ${isActive ? 'active' : ''}`} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Icon size={20} className="sidebar-icon" />
-                    <span>{item.label}</span>
-                  </div>
-                  {item.badge > 0 && (
-                    <span className="sidebar-badge">{item.badge > 99 ? '99+' : item.badge}</span>
+                <Link
+                  href={item.href}
+                  className={`sidebar-link ${active ? 'active' : ''}`}
+                  onClick={onClose}
+                >
+                  <Icon size={19} className="sidebar-icon" />
+                  <span className="sidebar-link-label">{item.label}</span>
+                  {(item.badge ?? 0) > 0 && (
+                    <span className="sidebar-badge">{(item.badge ?? 0) > 99 ? '99+' : item.badge}</span>
                   )}
                 </Link>
               </li>
@@ -72,10 +86,23 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
         </ul>
       </nav>
 
+      {/* Footer */}
       <div className="sidebar-footer">
-        <button className="sidebar-link sidebar-logout" onClick={() => signOut({ callbackUrl: '/login' })}>
-          <LogOut size={20} className="sidebar-icon" />
-          <span>{t('logout')}</span>
+        <div className="sidebar-user">
+          <div className="sidebar-user-avatar">
+            {(session?.user?.name || 'U').charAt(0).toUpperCase()}
+          </div>
+          <div className="sidebar-user-info">
+            <span className="sidebar-user-name">{session?.user?.name || '...'}</span>
+            <span className="sidebar-user-role">{role}</span>
+          </div>
+        </div>
+        <button
+          className="sidebar-link sidebar-logout"
+          onClick={() => signOut({ callbackUrl: '/login' })}
+        >
+          <LogOut size={18} className="sidebar-icon" />
+          <span className="sidebar-link-label">{t('logout')}</span>
         </button>
       </div>
     </aside>

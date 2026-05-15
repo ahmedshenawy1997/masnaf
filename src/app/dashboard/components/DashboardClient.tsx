@@ -142,7 +142,7 @@ function StatCard({
           background: var(--surface); border: 1px solid var(--border);
           border-radius: var(--radius-xl); padding: 1.25rem 1.5rem;
           box-shadow: var(--shadow-sm); transition: all 0.2s ease;
-          text-align: start; width: 100; position: relative;
+          text-align: start; width: 100%; position: relative;
         }
         .stat-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); border-color: ${color}44; }
         .stat-icon {
@@ -273,11 +273,17 @@ export default function DashboardClient({ data, session }: { data: any; session:
         }
         .dash-title { font-size: 1.6rem; font-weight: 800; color: var(--foreground); margin: 0 0 4px; }
         .dash-subtitle { font-size: 0.875rem; color: var(--text-muted); margin: 0; }
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
+        .stats-grid > :last-child:nth-child(odd):nth-child(5) { grid-column: span 4; max-width: 280px; }
         .section-header { margin: 0 0 0.875rem; }
         .section-header h2 { font-size: 1rem; font-weight: 700; color: var(--foreground); }
-        .quick-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem; }
-        @media (max-width: 480px) {
+        .quick-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; }
+        @media (max-width: 1100px) {
+          .stats-grid { grid-template-columns: repeat(2, 1fr); }
+          .stats-grid > :last-child:nth-child(odd):nth-child(5) { grid-column: span 2; max-width: none; }
+          .quick-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 580px) {
           .stats-grid { grid-template-columns: 1fr 1fr; }
           .quick-grid { grid-template-columns: 1fr 1fr; }
           .dash-title { font-size: 1.3rem; }

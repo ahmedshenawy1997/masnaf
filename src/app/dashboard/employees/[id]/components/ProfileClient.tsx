@@ -13,6 +13,7 @@ import { ChevronDown, ChevronRight } from 'lucide-react';
 
 const MONTH_NAMES_EN = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const MONTH_NAMES_AR = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+const ARCHIVE_LABEL: Record<string, string> = { en: 'Period Archive', ar: 'أرشيف الفترات' };
 
 export default function ProfileClient({
   profile,
@@ -60,7 +61,7 @@ export default function ProfileClient({
             <div className="archive-widget mb-6">
               <div className="archive-title">
                 <span>🗂</span>
-                <span>{isRTL ? 'أرشيف الفترات' : 'Period Archive'}</span>
+                <span>{ARCHIVE_LABEL[language] || ARCHIVE_LABEL.en}</span>
               </div>
               <div className="archive-body">
                 {years.map(year => (

@@ -1,24 +1,28 @@
 import EmployeeForm from '@/components/EmployeeForm';
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 
-export default function NewEmployeePage() {
+export default async function NewEmployeePage() {
+  const session = await getServerSession(authOptions);
+  const role = session?.user?.role;
+  if (role !== 'SUPERADMIN' && role !== 'ADMIN') redirect('/dashboard');
+
   return (
     <div className="new-employee-page">
       <div className="mb-6">
-        <Link href="/dashboard/employees" className="flex items-center gap-1 text-muted hover:text-foreground mb-4 transition-colors">
+        <Link
+          href="/dashboard/employees"
+          className="flex items-center gap-1 text-muted hover:text-foreground transition-colors"
+        >
           <ChevronLeft size={18} />
-          <span>Back to Employees</span>
         </Link>
-        <h1 className="title">Add New Employee</h1>
-        <p className="subtitle">Create a new account and profile for staff member</p>
       </div>
-
       <div className="max-w-3xl">
         <EmployeeForm />
       </div>
-
-
     </div>
   );
 }

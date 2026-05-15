@@ -74,6 +74,8 @@ model LeaveRequest {
   startDate  DateTime
   endDate    DateTime
   status     String          @default("PENDING")
+  reason     String?
+  adminNote  String?
   adminId    String?
   createdAt  DateTime        @default(now())
   updatedAt  DateTime        @updatedAt
@@ -153,4 +155,23 @@ model Payroll {
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
   employee      EmployeeProfile @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+}
+
+model CompanySettings {
+  id          String   @id @default(cuid())
+  companyName String   @default("RestoHR")
+  currency    String   @default("USD")
+  logoUrl     String?
+  timezone    String   @default("UTC")
+  updatedAt   DateTime @updatedAt
+}
+
+model ActivityLog {
+  id         String   @id @default(cuid())
+  userId     String
+  action     String
+  entityType String?
+  entityId   String?
+  details    String?
+  createdAt  DateTime @default(now())
 }

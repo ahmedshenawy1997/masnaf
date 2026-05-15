@@ -39,15 +39,18 @@ function LoginForm() {
         </button>
       </div>
 
-      <div className="login-card card">
-        <h1 className="login-title">RestoHR</h1>
-        <p className="login-subtitle">{t('sign_in')}</p>
+      <div className="login-card">
+        <div className="login-logo">
+          <div className="login-logo-icon">R</div>
+          <h1 className="login-title">RestoHR</h1>
+          <p className="login-subtitle">{t('sign_in')}</p>
+        </div>
 
         {errorParam && (
           <div className="login-error">
-             {errorParam === 'CredentialsSignin' 
-               ? (language === 'ar' ? 'خطأ في اسم المستخدم أو كلمة المرور' : 'Invalid username or password') 
-               : `Error: ${errorParam}`}
+            {errorParam === 'CredentialsSignin'
+              ? (language === 'ar' ? 'خطأ في اسم المستخدم أو كلمة المرور' : 'Invalid username or password')
+              : `Error: ${errorParam}`}
           </div>
         )}
 
@@ -61,6 +64,7 @@ function LoginForm() {
               onChange={(e) => setUsername(e.target.value)}
               required
               autoFocus
+              autoComplete="username"
             />
           </div>
 
@@ -72,11 +76,17 @@ function LoginForm() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              autoComplete="current-password"
             />
           </div>
 
-          <button type="submit" className="btn btn-primary w-full" disabled={loading}>
-            {loading ? t('loading') : t('sign_in')}
+          <button type="submit" className="btn btn-primary w-full login-submit" disabled={loading}>
+            {loading
+              ? <span style={{ display:'flex', alignItems:'center', gap:'0.5rem', justifyContent:'center' }}>
+                  <span className="spinner spinner-sm" style={{ borderTopColor:'#fff', borderColor:'rgba(255,255,255,0.3)' }} />
+                  {t('loading')}
+                </span>
+              : t('sign_in')}
           </button>
         </form>
 

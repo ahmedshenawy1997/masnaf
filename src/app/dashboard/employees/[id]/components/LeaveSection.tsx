@@ -1,31 +1,32 @@
 "use client";
 
 import { useState } from 'react';
-import { Calendar, Check, X, AlertCircle } from 'lucide-react';
+import { Check, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/lib/LanguageContext';
 
-export default function LeaveSection({ 
-  profileId, 
-  isAdmin, 
+export default function LeaveSection({
+  profileId,
+  isAdmin,
   leaves,
   selectedMonth,
   selectedYear,
   hideHeader = false
-}: { 
-  profileId: string; 
+}: {
+  profileId: string;
   isAdmin: boolean;
   leaves: any[];
   selectedMonth?: number;
   selectedYear?: number;
   hideHeader?: boolean;
 }) {
-  const filteredLeaves = (selectedMonth && selectedYear) 
+  const filteredLeaves = (selectedMonth && selectedYear)
     ? leaves.filter(l => {
         const d = new Date(l.startDate || l.createdAt);
         return d.getMonth() + 1 === selectedMonth && d.getFullYear() === selectedYear;
       })
     : leaves;
+
   const router = useRouter();
   const { t } = useLanguage();
   const [showForm, setShowForm] = useState(false);
@@ -48,7 +49,7 @@ export default function LeaveSection({
       });
 
       if (!res.ok) throw new Error('Failed to submit request');
-      
+
       setShowForm(false);
       router.refresh();
     } catch (err: any) {
@@ -69,6 +70,18 @@ export default function LeaveSection({
     } catch (err) {
       console.error(err);
     }
+  }
+
+  function statusLabel(status: string) {
+    if (status === 'APPROVED') return t('approved');
+    if (status === 'REJECTED') return t('rejected');
+    return t('pending');
+  }
+
+  function statusClass(status: string) {
+    if (status === 'APPROVED') return 'badge badge-success';
+    if (status === 'REJECTED') return 'badge badge-danger';
+    return 'badge badge-warning';
   }
 
   return (
@@ -104,6 +117,16 @@ export default function LeaveSection({
               <input type="date" name="endDate" className="form-input" required />
             </div>
           </div>
+          <div className="form-group mb-4">
+            <label className="form-label">{t('leave_reason')}</label>
+            <textarea
+              name="reason"
+              className="form-input"
+              rows={3}
+              placeholder={t('leave_reason')}
+              style={{ resize: 'vertical', minHeight: '80px' }}
+            />
+          </div>
           {error && <p className="text-danger text-sm mb-4">{error}</p>}
           <div className="flex justify-end">
             <button type="submit" className="btn btn-primary" disabled={loading}>
@@ -120,13 +143,18 @@ export default function LeaveSection({
               {profileId === 'all' && <th>{t('employee')}</th>}
               <th>{t('leave_type')}</th>
               <th>{t('period')}</th>
+              <th>{t('leave_reason')}</th>
               <th>{t('status')}</th>
               {isAdmin && <th>{t('actions')}</th>}
             </tr>
           </thead>
           <tbody>
             {filteredLeaves.length === 0 ? (
-              <tr><td colSpan={isAdmin ? 4 : 3} className="text-center py-4 text-muted">{t('no_history')}</td></tr>
+              <tr>
+                <td colSpan={isAdmin ? 5 : 4} className="text-center py-4 text-muted">
+                  {t('no_history')}
+                </td>
+              </tr>
             ) : (
               filteredLeaves.map((leave) => (
                 <tr key={leave.id}>
@@ -134,34 +162,45 @@ export default function LeaveSection({
                     <td>
                       <div>
                         <div className="font-bold text-sm">{leave.employee?.fullName}</div>
-                        <div className="text-xs text-muted" style={{ color: '#64748b' }}>{leave.employee?.jobTitle}</div>
+                        <div className="text-xs text-muted">{leave.employee?.jobTitle}</div>
                       </div>
                     </td>
                   )}
                   <td>
                     <span className="font-medium">
-                      {leave.type === 'VACATION' ? t('vacation_leave') : 
+                      {leave.type === 'VACATION' ? t('vacation_leave') :
                        leave.type === 'SICK' ? t('sick_leave') : t('emergency_leave')}
                     </span>
                   </td>
                   <td>
                     <div className="text-sm">
-                      {new Date(leave.startDate).toLocaleDateString()} - {new Date(leave.endDate).toLocaleDateString()}
+                      {new Date(leave.startDate).toLocaleDateString()} – {new Date(leave.endDate).toLocaleDateString()}
                     </div>
                   </td>
                   <td>
-                    <span className={`badge badge-${leave.status === 'APPROVED' ? 'success' : leave.status === 'REJECTED' ? 'danger' : 'warning'}`}>
-                      {leave.status}
+                    <span className="text-sm text-muted">{leave.reason || '—'}</span>
+                  </td>
+                  <td>
+                    <span className={statusClass(leave.status)}>
+                      {statusLabel(leave.status)}
                     </span>
                   </td>
                   {isAdmin && (
                     <td>
                       {leave.status === 'PENDING' && (
                         <div className="flex gap-2">
-                          <button onClick={() => updateStatus(leave.id, 'APPROVED')} className="btn-icon text-success" title="Approve">
+                          <button
+                            onClick={() => updateStatus(leave.id, 'APPROVED')}
+                            className="btn-icon text-success"
+                            title={t('approve')}
+                          >
                             <Check size={18} />
                           </button>
-                          <button onClick={() => updateStatus(leave.id, 'REJECTED')} className="btn-icon text-danger" title="Reject">
+                          <button
+                            onClick={() => updateStatus(leave.id, 'REJECTED')}
+                            className="btn-icon text-danger"
+                            title={t('reject')}
+                          >
                             <X size={18} />
                           </button>
                         </div>
@@ -192,7 +231,7 @@ export default function LeaveSection({
           justify-content: center;
           transition: 0.2s;
         }
-        .btn-icon:hover { background: #f8fafc; border-color: var(--primary); color: var(--primary); }
+        .btn-icon:hover { background: #f8fafc; border-color: var(--primary); }
       `}</style>
     </div>
   );

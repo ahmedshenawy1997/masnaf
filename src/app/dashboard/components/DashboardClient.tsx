@@ -1,6 +1,6 @@
 "use client";
 
-import { Users, Clock, LogIn, LogOut, FileText, X, User, CalendarCheck, TrendingUp, BarChart2, DollarSign } from 'lucide-react';
+import { Users, Clock, LogIn, LogOut, FileText, X, User, CalendarCheck, TrendingUp, BarChart2, DollarSign, ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useLanguage } from '@/lib/LanguageContext';
@@ -14,22 +14,20 @@ type EmployeeSummary = {
 
 function Avatar({ name, photo, size = 44 }: { name: string; photo?: string | null; size?: number }) {
   const initials = name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
-  const colors = ['#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6','#06b6d4'];
+  const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
   const color = colors[name.charCodeAt(0) % colors.length];
-  if (photo) return <img src={photo} alt={name} style={{ width: size, height: size, borderRadius: 12, objectFit: 'cover' }} />;
+  if (photo) return <img src={photo} alt={name} style={{ width: size, height: size, borderRadius: 10, objectFit: 'cover' }} />;
   return (
     <div style={{
-      width: size, height: size, borderRadius: 12,
-      background: color + '22', color, border: `1.5px solid ${color}44`,
+      width: size, height: size, borderRadius: 10,
+      background: color + '20', color, border: `1.5px solid ${color}40`,
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      fontWeight: 900, fontSize: size * 0.35,
+      fontWeight: 900, fontSize: size * 0.35, flexShrink: 0,
     }}>{initials}</div>
   );
 }
 
-function EmployeeModal({
-  title, employees, color, onClose
-}: {
+function EmployeeModal({ title, employees, color, onClose }: {
   title: string; employees: EmployeeSummary[]; color: 'green' | 'red' | 'blue' | 'orange'; onClose: () => void;
 }) {
   const { t } = useLanguage();
@@ -41,28 +39,27 @@ function EmployeeModal({
   }[color];
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-box" onClick={e => e.stopPropagation()}>
-        <div className="modal-header" style={{ borderBottom: `3px solid ${palette.border}` }}>
-          <h2 className="modal-title">{title}</h2>
-          <button onClick={onClose} className="modal-close-btn"><X size={18} /></button>
+    <div className="emp-modal-overlay" onClick={onClose}>
+      <div className="emp-modal-box" onClick={e => e.stopPropagation()}>
+        <div className="emp-modal-header" style={{ borderBottom: `3px solid ${palette.border}` }}>
+          <h2 className="emp-modal-title">{title}</h2>
+          <button onClick={onClose} className="emp-modal-close"><X size={16} /></button>
         </div>
-
         {employees.length === 0 ? (
           <div className="empty-state" style={{ padding: '3rem 1rem' }}>
             <User size={40} strokeWidth={1} />
             <p>{t('no_employees')}</p>
           </div>
         ) : (
-          <div className="modal-list">
+          <div className="emp-modal-list">
             {employees.map(emp => (
-              <Link key={emp.id} href={`/dashboard/employees/${emp.id}`} className="modal-emp-row" onClick={onClose}>
-                <Avatar name={emp.fullName} photo={emp.profilePhoto} size={44} />
-                <div className="modal-emp-info">
-                  <p className="modal-emp-name">{emp.fullName}</p>
-                  {emp.jobTitle && <p className="modal-emp-role">{emp.jobTitle}</p>}
+              <Link key={emp.id} href={`/dashboard/employees/${emp.id}`} className="emp-modal-row" onClick={onClose}>
+                <Avatar name={emp.fullName} photo={emp.profilePhoto} size={40} />
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ fontSize: '0.875rem', fontWeight: 700, color: '#1e293b', margin: 0 }}>{emp.fullName}</p>
+                  {emp.jobTitle && <p style={{ fontSize: '0.75rem', color: '#94a3b8', margin: 0 }}>{emp.jobTitle}</p>}
                 </div>
-                <span className="modal-badge" style={{ background: palette.bg, color: palette.text }}>
+                <span style={{ fontSize: '0.7rem', fontWeight: 700, padding: '3px 8px', borderRadius: 6, background: palette.bg, color: palette.text, whiteSpace: 'nowrap' }}>
                   {palette.label}
                 </span>
               </Link>
@@ -72,190 +69,301 @@ function EmployeeModal({
       </div>
 
       <style jsx>{`
-        .modal-overlay {
-          position: fixed; inset: 0; background: rgba(0,0,0,0.45);
-          backdrop-filter: blur(6px); z-index: 1000;
+        .emp-modal-overlay {
+          position: fixed; inset: 0; background: rgba(15,23,42,0.6);
+          backdrop-filter: blur(8px); z-index: 1000;
           display: flex; align-items: center; justify-content: center; padding: 1rem;
-          animation: fadeIn 0.2s ease;
+          animation: mfadeIn 0.2s ease;
         }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .modal-box {
-          background: var(--surface); border-radius: 20px;
-          width: 100%; max-width: 480px; max-height: 80vh;
+        @keyframes mfadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .emp-modal-box {
+          background: #fff; border-radius: 20px;
+          width: 100%; max-width: 460px; max-height: 78vh;
           display: flex; flex-direction: column;
-          box-shadow: 0 25px 60px rgba(0,0,0,0.18);
-          animation: slideUp 0.25s ease; border: 1px solid var(--border);
+          box-shadow: 0 32px 80px rgba(0,0,0,0.2);
+          animation: mslideUp 0.25s ease;
         }
-        @keyframes slideUp { from { transform: translateY(24px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .modal-header {
+        @keyframes mslideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .emp-modal-header {
           display: flex; align-items: center; justify-content: space-between;
-          padding: 18px 20px; flex-shrink: 0;
+          padding: 16px 20px; flex-shrink: 0;
         }
-        .modal-title { font-size: 1rem; font-weight: 800; color: var(--foreground); margin: 0; }
-        .modal-close-btn {
-          width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border);
-          background: var(--background); color: var(--text-muted); cursor: pointer;
+        .emp-modal-title { font-size: 0.95rem; font-weight: 800; color: #0f172a; margin: 0; }
+        .emp-modal-close {
+          width: 28px; height: 28px; border-radius: 7px; border: 1px solid #e2e8f0;
+          background: #f8fafc; color: #94a3b8; cursor: pointer;
           display: flex; align-items: center; justify-content: center; transition: 0.15s;
         }
-        .modal-close-btn:hover { background: var(--border); color: var(--foreground); }
-        .modal-list { overflow-y: auto; padding: 10px; flex: 1; }
-        .modal-emp-row {
-          display: flex; align-items: center; gap: 12px;
+        .emp-modal-close:hover { background: #f1f5f9; color: #475569; }
+        .emp-modal-list { overflow-y: auto; padding: 8px; flex: 1; }
+        .emp-modal-row {
+          display: flex; align-items: center; gap: 10px;
           padding: 10px 12px; border-radius: 12px; transition: 0.15s;
           text-decoration: none; color: inherit; border: 1px solid transparent;
         }
-        .modal-emp-row:hover { background: var(--background); border-color: var(--border); }
-        .modal-emp-info { flex: 1; }
-        .modal-emp-name { font-size: 0.875rem; font-weight: 700; color: var(--foreground); margin: 0 0 2px; }
-        .modal-emp-role { font-size: 0.75rem; font-weight: 500; color: var(--text-muted); margin: 0; }
-        .modal-badge {
-          font-size: 0.7rem; font-weight: 700; padding: 3px 8px;
-          border-radius: 6px; white-space: nowrap;
+        .emp-modal-row:hover { background: #f8fafc; border-color: #e2e8f0; }
+      `}</style>
+    </div>
+  );
+}
+
+/* ─────── KPI Card ─────── */
+function KpiCard({ icon, label, value, sublabel, color, accent, onClick }: {
+  icon: React.ReactNode; label: string; value: string | number;
+  sublabel?: string; color: string; accent: string; onClick?: () => void;
+}) {
+  const Tag = onClick ? 'button' : 'div';
+  return (
+    <Tag className="kpi-card" onClick={onClick} style={{ '--accent': accent, '--color': color } as React.CSSProperties}>
+      <div className="kpi-top">
+        <div className="kpi-icon" style={{ background: color + '18', color }}>{icon}</div>
+        {onClick && <ArrowUpRight size={15} className="kpi-arrow" />}
+      </div>
+      <div className="kpi-value">{value}</div>
+      <div className="kpi-label">{label}</div>
+      {sublabel && <div className="kpi-sublabel">{sublabel}</div>}
+
+      <style jsx>{`
+        .kpi-card {
+          background: #fff;
+          border: 1px solid #f1f5f9;
+          border-radius: 18px;
+          padding: 1.25rem 1.375rem;
+          display: flex; flex-direction: column; gap: 0.5rem;
+          cursor: ${onClick ? 'pointer' : 'default'};
+          transition: all 0.2s ease;
+          text-align: start;
+          width: 100%;
+          position: relative;
+          overflow: hidden;
+          box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        }
+        .kpi-card::before {
+          content: '';
+          position: absolute;
+          top: 0; left: 0; right: 0;
+          height: 3px;
+          background: ${color};
+          border-radius: 18px 18px 0 0;
+        }
+        .kpi-card:hover {
+          border-color: ${color}33;
+          box-shadow: 0 8px 24px ${color}18;
+          transform: translateY(-2px);
+        }
+        .kpi-top {
+          display: flex; align-items: center; justify-content: space-between;
+          margin-bottom: 0.25rem;
+        }
+        .kpi-icon {
+          width: 42px; height: 42px; border-radius: 12px;
+          display: flex; align-items: center; justify-content: center;
+          flex-shrink: 0;
+        }
+        .kpi-arrow {
+          color: #cbd5e1;
+          transition: 0.15s;
+        }
+        .kpi-card:hover .kpi-arrow { color: ${color}; }
+        .kpi-value {
+          font-size: 2rem; font-weight: 900; color: #0f172a;
+          line-height: 1; letter-spacing: -0.03em;
+        }
+        .kpi-label { font-size: 0.8rem; color: #94a3b8; font-weight: 500; }
+        .kpi-sublabel { font-size: 0.72rem; color: #cbd5e1; font-weight: 400; }
+      `}</style>
+    </Tag>
+  );
+}
+
+/* ─────── Quick Link Card ─────── */
+function QuickCard({ href, icon, label, desc, color }: {
+  href: string; icon: React.ReactNode; label: string; desc?: string; color: string;
+}) {
+  return (
+    <Link href={href} className="quick-card">
+      <div className="qc-icon" style={{ background: color + '15', color }}>{icon}</div>
+      <div className="qc-body">
+        <span className="qc-label">{label}</span>
+        {desc && <span className="qc-desc">{desc}</span>}
+      </div>
+      <ArrowUpRight size={15} className="qc-arrow" style={{ color: '#cbd5e1' }} />
+
+      <style jsx>{`
+        .quick-card {
+          display: flex; align-items: center; gap: 0.875rem;
+          background: #fff; border: 1px solid #f1f5f9;
+          border-radius: 14px; padding: 1rem 1.125rem;
+          text-decoration: none; color: #1e293b;
+          transition: all 0.2s;
+          box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        }
+        .quick-card:hover {
+          border-color: ${color}33;
+          box-shadow: 0 6px 20px ${color}12;
+          transform: translateY(-1px);
+        }
+        .quick-card:hover .qc-arrow { color: ${color} !important; }
+        .qc-icon {
+          width: 40px; height: 40px; border-radius: 11px;
+          display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .qc-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+        .qc-label { font-size: 0.875rem; font-weight: 700; color: #1e293b; }
+        .qc-desc { font-size: 0.73rem; color: #94a3b8; font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .qc-arrow { flex-shrink: 0; transition: 0.15s; }
+      `}</style>
+    </Link>
+  );
+}
+
+/* ─────── Greeting Banner ─────── */
+function GreetingBanner({ name, isAdmin, addLink, addLabel }: {
+  name: string; isAdmin: boolean; addLink?: string; addLabel?: string;
+}) {
+  const { t } = useLanguage();
+  const now = new Date();
+  const hour = now.getHours();
+  const greeting = hour < 12 ? t('good_morning') : hour < 18 ? t('good_afternoon') : t('good_evening');
+  const dateStr = now.toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+  return (
+    <div className="greeting-banner">
+      <div className="greeting-text">
+        <h1 className="greeting-title">{greeting || 'مرحباً'}، <span>{name}</span> 👋</h1>
+        <p className="greeting-date">{dateStr}</p>
+      </div>
+      {isAdmin && addLink && (
+        <Link href={addLink} className="greeting-btn">
+          <span>+</span>
+          <span>{addLabel}</span>
+        </Link>
+      )}
+
+      <style jsx>{`
+        .greeting-banner {
+          background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+          border-radius: 20px;
+          padding: 1.5rem 1.75rem;
+          display: flex; align-items: center; justify-content: space-between;
+          gap: 1rem; margin-bottom: 1.75rem; flex-wrap: wrap;
+          box-shadow: 0 8px 32px rgba(15,23,42,0.15);
+        }
+        .greeting-text { display: flex; flex-direction: column; gap: 4px; }
+        .greeting-title { font-size: 1.4rem; font-weight: 800; color: #f8fafc; margin: 0; line-height: 1.3; }
+        .greeting-title span { color: #60a5fa; }
+        .greeting-date { font-size: 0.8rem; color: #64748b; margin: 0; }
+        .greeting-btn {
+          display: inline-flex; align-items: center; gap: 0.4rem;
+          background: #3b82f6; color: #fff;
+          padding: 0.6rem 1.25rem; border-radius: 12px;
+          font-weight: 700; font-size: 0.875rem;
+          text-decoration: none; transition: 0.2s;
+          box-shadow: 0 4px 12px rgba(59,130,246,0.4);
+          white-space: nowrap;
+        }
+        .greeting-btn:hover { background: #2563eb; transform: translateY(-1px); }
+      `}</style>
+    </div>
+  );
+}
+
+/* ─────── Section Header ─────── */
+function SectionTitle({ label }: { label: string }) {
+  return (
+    <div className="sec-title">
+      <span>{label}</span>
+      <style jsx>{`
+        .sec-title {
+          font-size: 0.8rem; font-weight: 700;
+          color: #94a3b8; text-transform: uppercase;
+          letter-spacing: 0.08em;
+          margin-bottom: 0.875rem;
+          display: flex; align-items: center; gap: 0.5rem;
+        }
+        .sec-title::after {
+          content: ''; flex: 1; height: 1px; background: #f1f5f9;
         }
       `}</style>
     </div>
   );
 }
 
-function StatCard({
-  icon, label, value, color, onClick, sublabel
-}: {
-  icon: React.ReactNode; label: string; value: string | number;
-  color: string; onClick?: () => void; sublabel?: string;
-}) {
-  const Tag = onClick ? 'button' : 'div';
-  return (
-    <Tag className="stat-card" onClick={onClick} style={{ cursor: onClick ? 'pointer' : 'default' }}>
-      <div className="stat-icon" style={{ background: color + '18', color }}>
-        {icon}
-      </div>
-      <div className="stat-body">
-        <p className="stat-label">{label}</p>
-        <h2 className="stat-value">{value}</h2>
-        {sublabel && <p className="stat-sublabel">{sublabel}</p>}
-      </div>
-      {onClick && <div className="stat-arrow">›</div>}
-
-      <style jsx>{`
-        .stat-card {
-          display: flex; align-items: center; gap: 1rem;
-          background: var(--surface); border: 1px solid var(--border);
-          border-radius: var(--radius-xl); padding: 1.25rem 1.5rem;
-          box-shadow: var(--shadow-sm); transition: all 0.2s ease;
-          text-align: start; width: 100%; position: relative;
-        }
-        .stat-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); border-color: ${color}44; }
-        .stat-icon {
-          width: 48px; height: 48px; border-radius: 14px; flex-shrink: 0;
-          display: flex; align-items: center; justify-content: center;
-        }
-        .stat-body { flex: 1; min-width: 0; }
-        .stat-label { font-size: 0.8rem; color: var(--text-muted); font-weight: 500; margin: 0 0 4px; }
-        .stat-value { font-size: 1.75rem; font-weight: 800; color: var(--foreground); line-height: 1; margin: 0; }
-        .stat-sublabel { font-size: 0.72rem; color: var(--text-muted); margin: 4px 0 0; }
-        .stat-arrow { font-size: 1.5rem; color: var(--text-muted); opacity: 0.4; font-weight: 300; }
-      `}</style>
-    </Tag>
-  );
-}
-
-function QuickLink({ href, icon, label, color }: { href: string; icon: React.ReactNode; label: string; color: string }) {
-  return (
-    <Link href={href} className="quick-link">
-      <div className="ql-icon" style={{ background: color + '18', color }}>{icon}</div>
-      <span className="ql-label">{label}</span>
-      <style jsx>{`
-        .quick-link {
-          display: flex; align-items: center; gap: 0.875rem;
-          background: var(--surface); border: 1px solid var(--border);
-          border-radius: var(--radius-xl); padding: 1rem 1.25rem;
-          text-decoration: none; color: var(--foreground); font-weight: 600;
-          font-size: 0.875rem; transition: all 0.2s;
-          box-shadow: var(--shadow-sm);
-        }
-        .quick-link:hover { border-color: ${color}66; background: ${color}08; box-shadow: var(--shadow-md); transform: translateY(-1px); }
-        .ql-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .ql-label { flex: 1; }
-      `}</style>
-    </Link>
-  );
-}
-
+/* ═══════════════════════════════════════════════════════
+   MAIN COMPONENT
+═══════════════════════════════════════════════════════ */
 export default function DashboardClient({ data, session }: { data: any; session: any }) {
   const { t } = useLanguage();
   const [modal, setModal] = useState<'present' | 'absent' | 'active' | 'leave' | null>(null);
 
-  /* ───── Employee View ───── */
+  /* ── Employee View ── */
   if (session.user.role === 'EMPLOYEE') {
     const statusColor = data.todayStatus === 'WORKING' ? '#10b981' : data.todayStatus === 'COMPLETED' ? '#3b82f6' : '#94a3b8';
     const statusLabel = data.todayStatus === 'WORKING' ? t('currently_working') : data.todayStatus === 'COMPLETED' ? t('check_out') : t('not_checked_in');
 
     return (
-      <div className="dashboard">
-        <div className="dash-greeting">
-          <div>
-            <h1 className="dash-title">{t('welcome')}, <span>{session?.user?.name}</span> 👋</h1>
-            <p className="dash-subtitle">{t('today_snapshot')}</p>
-          </div>
+      <div className="db-wrap">
+        <GreetingBanner name={session.user.name} isAdmin={false} />
+
+        <SectionTitle label={t('today_snapshot')} />
+        <div className="emp-stats-grid">
+          <KpiCard icon={<Clock size={20} />} label={t('hours_this_month')} value={(data.totalHoursMonth || 0).toFixed(1)} sublabel={t('hours_unit')} color="#3b82f6" accent="#eff6ff" />
+          <KpiCard icon={<CalendarCheck size={20} />} label={t('attendance')} value={data.daysWorkedMonth || 0} sublabel={t('days')} color="#10b981" accent="#f0fdf4" />
+          <KpiCard icon={<TrendingUp size={20} />} label={t('status')} value={statusLabel} color={statusColor} accent="#f8fafc" />
         </div>
 
-        <div className="stats-grid">
-          <StatCard icon={<Clock size={22} />} label={t('hours_this_month')} value={`${(data.totalHoursMonth || 0).toFixed(1)}`} sublabel={t('hours_unit')} color="#3b82f6" />
-          <StatCard icon={<CalendarCheck size={22} />} label={t('attendance')} value={data.daysWorkedMonth || 0} sublabel={t('days')} color="#10b981" />
-          <StatCard icon={<TrendingUp size={22} />} label={t('status')} value={statusLabel} color={statusColor} />
-        </div>
-
-        <div className="section-header"><h2>{t('quick_access')}</h2></div>
+        <SectionTitle label={t('quick_access')} />
         <div className="quick-grid">
-          <QuickLink href={`/dashboard/employees/${data.profileId}`} icon={<User size={18} />} label={t('personal_info')} color="#3b82f6" />
-          <QuickLink href={`/dashboard/employees/${data.profileId}#attendance`} icon={<Clock size={18} />} label={t('attendance')} color="#10b981" />
-          <QuickLink href={`/dashboard/employees/${data.profileId}#leaves`} icon={<CalendarCheck size={18} />} label={t('leaves')} color="#f59e0b" />
-          <QuickLink href={`/dashboard/employees/${data.profileId}#medical`} icon={<FileText size={18} />} label={t('medical_reports')} color="#ef4444" />
+          <QuickCard href={`/dashboard/employees/${data.profileId}`} icon={<User size={18} />} label={t('personal_info')} desc={t('view_profile')} color="#3b82f6" />
+          <QuickCard href={`/dashboard/employees/${data.profileId}#attendance`} icon={<Clock size={18} />} label={t('attendance')} color="#10b981" />
+          <QuickCard href={`/dashboard/employees/${data.profileId}#leaves`} icon={<CalendarCheck size={18} />} label={t('leaves')} color="#f59e0b" />
+          <QuickCard href={`/dashboard/employees/${data.profileId}#medical`} icon={<FileText size={18} />} label={t('medical_reports')} color="#ef4444" />
         </div>
 
         <style jsx>{`
-          .dash-greeting { margin-bottom: 2rem; }
-          .dash-title { font-size: 1.6rem; font-weight: 800; color: var(--foreground); margin: 0 0 4px; }
-          .dash-title span { color: var(--primary); }
-          .dash-subtitle { font-size: 0.875rem; color: var(--text-muted); margin: 0; }
-          .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
-          .section-header { margin: 0 0 1rem; }
-          .section-header h2 { font-size: 1rem; font-weight: 700; color: var(--foreground); }
-          .quick-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem; }
+          .db-wrap { animation: dbFade 0.35s ease-out; }
+          @keyframes dbFade { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+          .emp-stats-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:1.75rem; }
+          .quick-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:0.75rem; }
+          @media (max-width:700px) {
+            .emp-stats-grid { grid-template-columns:1fr 1fr; }
+            .quick-grid { grid-template-columns:1fr 1fr; }
+          }
+          @media (max-width:440px) {
+            .emp-stats-grid { grid-template-columns:1fr; }
+          }
         `}</style>
       </div>
     );
   }
 
-  /* ───── Admin View ───── */
+  /* ── Admin View ── */
   const totalHours = (data.totalHoursToday || 0).toFixed(1);
 
   return (
-    <div className="dashboard">
-      <div className="dash-greeting">
-        <div>
-          <h1 className="dash-title">{t('dashboard')}</h1>
-          <p className="dash-subtitle">{t('today_snapshot')}</p>
-        </div>
-        <Link href="/dashboard/employees/new" className="btn btn-primary btn-sm">
-          + {t('add_employee')}
-        </Link>
+    <div className="db-wrap">
+      <GreetingBanner
+        name={session.user.name}
+        isAdmin
+        addLink="/dashboard/employees/new"
+        addLabel={t('add_employee')}
+      />
+
+      <SectionTitle label={t('today_snapshot')} />
+      <div className="admin-stats-grid">
+        <KpiCard icon={<LogIn size={20} />}        label={t('present_today')}  value={data.presentToday ?? 0}       color="#10b981" accent="#f0fdf4" onClick={() => setModal('present')} />
+        <KpiCard icon={<LogOut size={20} />}       label={t('absent_today')}   value={data.absentToday ?? 0}        color="#ef4444" accent="#fef2f2" onClick={() => setModal('absent')} />
+        <KpiCard icon={<Users size={20} />}        label={t('currently_in')}   value={data.currentlyCheckedIn ?? 0} color="#3b82f6" accent="#eff6ff" onClick={() => setModal('active')} />
+        <KpiCard icon={<CalendarCheck size={20} />} label={t('on_leave_today')} value={data.onLeaveToday ?? 0}      color="#f59e0b" accent="#fffbeb" onClick={() => setModal('leave')} />
+        <KpiCard icon={<Clock size={20} />}        label={t('total_hours')}    value={totalHours}                   color="#8b5cf6" accent="#f5f3ff" sublabel={t('hours_unit')} />
       </div>
 
-      <div className="stats-grid">
-        <StatCard icon={<LogIn size={22} />}     label={t('present_today')}  value={data.presentToday ?? 0}        color="#10b981" onClick={() => setModal('present')} />
-        <StatCard icon={<LogOut size={22} />}    label={t('absent_today')}   value={data.absentToday ?? 0}         color="#ef4444" onClick={() => setModal('absent')} />
-        <StatCard icon={<Users size={22} />}     label={t('currently_in')}   value={data.currentlyCheckedIn ?? 0}  color="#3b82f6" onClick={() => setModal('active')} />
-        <StatCard icon={<CalendarCheck size={22} />} label={t('on_leave_today')} value={data.onLeaveToday ?? 0}   color="#f59e0b" onClick={() => setModal('leave')} />
-        <StatCard icon={<Clock size={22} />}     label={t('total_hours')}    value={totalHours}                    color="#8b5cf6" sublabel={t('hours_unit')} />
-      </div>
-
-      <div className="section-header"><h2>{t('quick_access')}</h2></div>
-      <div className="quick-grid">
-        <QuickLink href="/dashboard/employees"  icon={<Users size={18} />}     label={t('employees')}         color="#3b82f6" />
-        <QuickLink href="/dashboard/leaves"     icon={<CalendarCheck size={18} />} label={t('leaves')}        color="#f59e0b" />
-        <QuickLink href="/dashboard/payroll"    icon={<DollarSign size={18} />} label={t('payroll_management')} color="#10b981" />
-        <QuickLink href="/dashboard/reports"    icon={<BarChart2 size={18} />}  label={t('reports')}          color="#8b5cf6" />
+      <SectionTitle label={t('quick_access')} />
+      <div className="admin-quick-grid">
+        <QuickCard href="/dashboard/employees"  icon={<Users size={18} />}        label={t('employees')}          desc={t('employee_list')}       color="#3b82f6" />
+        <QuickCard href="/dashboard/leaves"     icon={<CalendarCheck size={18} />} label={t('leaves')}            desc={t('leave_management')}    color="#f59e0b" />
+        <QuickCard href="/dashboard/payroll"    icon={<DollarSign size={18} />}   label={t('payroll_management')} desc={t('payroll_management')}  color="#10b981" />
+        <QuickCard href="/dashboard/reports"    icon={<BarChart2 size={18} />}    label={t('reports')}            desc={t('reports')}             color="#8b5cf6" />
       </div>
 
       {/* Modals */}
@@ -265,28 +373,26 @@ export default function DashboardClient({ data, session }: { data: any; session:
       {modal === 'leave'   && <EmployeeModal title={`${t('on_leave_today')} (${data.onLeaveEmployees?.length ?? 0})`}          employees={data.onLeaveEmployees ?? []}            color="orange" onClose={() => setModal(null)} />}
 
       <style jsx>{`
-        .dashboard { animation: fadeIn 0.3s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-        .dash-greeting {
-          display: flex; align-items: center; justify-content: space-between;
-          flex-wrap: wrap; gap: 1rem; margin-bottom: 1.75rem;
+        .db-wrap { animation: dbFade 0.35s ease-out; }
+        @keyframes dbFade { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+        .admin-stats-grid {
+          display: grid;
+          grid-template-columns: repeat(5, 1fr);
+          gap: 0.875rem;
+          margin-bottom: 1.75rem;
         }
-        .dash-title { font-size: 1.6rem; font-weight: 800; color: var(--foreground); margin: 0 0 4px; }
-        .dash-subtitle { font-size: 0.875rem; color: var(--text-muted); margin: 0; }
-        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
-        .stats-grid > :last-child:nth-child(odd):nth-child(5) { grid-column: span 4; max-width: 280px; }
-        .section-header { margin: 0 0 0.875rem; }
-        .section-header h2 { font-size: 1rem; font-weight: 700; color: var(--foreground); }
-        .quick-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; }
+        .admin-quick-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 0.75rem;
+        }
         @media (max-width: 1100px) {
-          .stats-grid { grid-template-columns: repeat(2, 1fr); }
-          .stats-grid > :last-child:nth-child(odd):nth-child(5) { grid-column: span 2; max-width: none; }
-          .quick-grid { grid-template-columns: repeat(2, 1fr); }
+          .admin-stats-grid { grid-template-columns: repeat(3, 1fr); }
+          .admin-quick-grid { grid-template-columns: repeat(2, 1fr); }
         }
-        @media (max-width: 580px) {
-          .stats-grid { grid-template-columns: 1fr 1fr; }
-          .quick-grid { grid-template-columns: 1fr 1fr; }
-          .dash-title { font-size: 1.3rem; }
+        @media (max-width: 700px) {
+          .admin-stats-grid { grid-template-columns: repeat(2, 1fr); }
+          .admin-quick-grid { grid-template-columns: repeat(2, 1fr); }
         }
       `}</style>
     </div>

@@ -11,10 +11,12 @@ export async function GET(req: Request) {
     }
 
     const { searchParams } = new URL(req.url);
-    const type = searchParams.get('type');
+    const type  = searchParams.get('type');
     const start = searchParams.get('start');
-    const end = searchParams.get('end');
+    const end   = searchParams.get('end');
     const empId = searchParams.get('empId');
+    const month = searchParams.get('month') ? parseInt(searchParams.get('month')!) : undefined;
+    const year  = searchParams.get('year')  ? parseInt(searchParams.get('year')!)  : undefined;
 
     const dateFilter: any = {};
     if (start) dateFilter.gte = new Date(start);
@@ -24,54 +26,87 @@ export async function GET(req: Request) {
       dateFilter.lte = endDate;
     }
 
+    // ── Attendance ────────────────────────────────────────────────────────────
     if (type === 'attendance') {
-      const where: any = { checkInTime: dateFilter };
-      if (empId !== 'all') where.employeeId = empId;
-      
+      const where: any = {};
+      if (start || end) where.checkInTime = dateFilter;
+      if (empId && empId !== 'all') where.employeeId = empId;
+
       const data = await prisma.attendance.findMany({
         where,
-        include: { employee: true },
-        orderBy: { checkInTime: 'desc' }
+        include: { employee: { select: { fullName: true, jobTitle: true } } },
+        orderBy: { checkInTime: 'desc' },
       });
       return NextResponse.json(data);
     }
 
+    // ── Estimated salary (by attendance hours) ────────────────────────────────
     if (type === 'salary') {
+      const attFilter: any = { checkOutTime: { not: null } };
+      if (start || end) attFilter.checkInTime = dateFilter;
+
       const employees = await prisma.employeeProfile.findMany({
         where: empId && empId !== 'all' ? { id: empId } : {},
-        include: {
-          attendances: {
-            where: { checkInTime: dateFilter, checkOutTime: { not: null } }
-          }
-        }
+        include: { attendances: { where: attFilter } },
+        orderBy: { fullName: 'asc' },
       });
 
-      const data = employees.map(emp => {
-        const totalHours = emp.attendances.reduce((acc, curr) => acc + (curr.totalHours || 0), 0);
-        return {
-          id: emp.id,
-          fullName: emp.fullName,
-          hourlyRate: emp.hourlyRate,
-          totalHours
-        };
+      const data = employees.map(emp => ({
+        id:         emp.id,
+        fullName:   emp.fullName,
+        jobTitle:   emp.jobTitle,
+        hourlyRate: emp.hourlyRate,
+        totalHours: emp.attendances.reduce((s, a) => s + (a.totalHours || 0), 0),
+      }));
+      return NextResponse.json(data);
+    }
+
+    // ── Confirmed payroll (from Payroll records) ──────────────────────────────
+    if (type === 'payroll') {
+      const where: any = {};
+      if (empId && empId !== 'all') where.employeeId = empId;
+      if (month) where.month = month;
+      if (year)  where.year  = year;
+
+      const data = await prisma.payroll.findMany({
+        where,
+        include: { employee: { select: { fullName: true, jobTitle: true } } },
+        orderBy: [{ year: 'desc' }, { month: 'desc' }, { createdAt: 'desc' }],
       });
       return NextResponse.json(data);
     }
 
+    // ── Leave requests ────────────────────────────────────────────────────────
     if (type === 'leave') {
-      const where: any = { startDate: dateFilter };
-      if (empId !== 'all') where.employeeId = empId;
+      const where: any = {};
+      if (start || end) where.startDate = dateFilter;
+      if (empId && empId !== 'all') where.employeeId = empId;
 
       const data = await prisma.leaveRequest.findMany({
         where,
-        include: { employee: true },
-        orderBy: { startDate: 'desc' }
+        include: { employee: { select: { fullName: true, jobTitle: true } } },
+        orderBy: { startDate: 'desc' },
+      });
+      return NextResponse.json(data);
+    }
+
+    // ── Penalties ─────────────────────────────────────────────────────────────
+    if (type === 'penalties') {
+      const where: any = {};
+      if (start || end) where.date = dateFilter;
+      if (empId && empId !== 'all') where.employeeId = empId;
+
+      const data = await prisma.penaltyNote.findMany({
+        where,
+        include: { employee: { select: { fullName: true, jobTitle: true } } },
+        orderBy: { date: 'desc' },
       });
       return NextResponse.json(data);
     }
 
     return NextResponse.json({ error: "Invalid report type" }, { status: 400 });
   } catch (error) {
+    console.error("Report error:", error);
     return NextResponse.json({ error: "Report generation failed" }, { status: 500 });
   }
 }

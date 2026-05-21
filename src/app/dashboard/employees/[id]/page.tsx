@@ -100,7 +100,7 @@ export default async function EmployeeProfilePage({
           <div className="pstat-divider" />
           <div className="profile-stat">
             <span className="pstat-label">💳 سعر الساعة</span>
-            <span className="pstat-value">{profile.hourlyRate?.toFixed(0)} ج.م / ساعة</span>
+            <span className="pstat-value">{profile.hourlyRate?.toFixed(0)} ر.س / ساعة</span>
           </div>
           <div className="pstat-divider" />
           <div className="profile-stat">

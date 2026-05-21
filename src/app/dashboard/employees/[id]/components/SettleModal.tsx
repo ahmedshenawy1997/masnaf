@@ -99,7 +99,7 @@ export default function SettleModal({
               <div className="ban-icon purple"><DollarSign size={16} /></div>
               <div>
                 <span className="ban-lbl">سعر الساعة</span>
-                <span className="ban-val">{profile.hourlyRate.toFixed(0)} ج.م</span>
+                <span className="ban-val">{profile.hourlyRate.toFixed(0)} ر.س</span>
               </div>
             </div>
             <div className="ban-sep" />
@@ -107,7 +107,7 @@ export default function SettleModal({
               <div className="ban-icon green"><DollarSign size={16} /></div>
               <div>
                 <span className="ban-lbl">الراتب المحسوب</span>
-                <span className="ban-val main">{currentSalary.toLocaleString('ar-EG')} ج.م</span>
+                <span className="ban-val main">{currentSalary.toLocaleString('ar-EG')} ر.س</span>
               </div>
             </div>
           </div>
@@ -121,7 +121,7 @@ export default function SettleModal({
                 <div className="inp-wrap">
                   <input type="number" step="1" min="0" value={bonus}
                     onChange={e => setBonus(e.target.value)} placeholder="0" />
-                  <span className="curr">ج.م</span>
+                  <span className="curr">ر.س</span>
                 </div>
               </div>
               <div className="adj-group">
@@ -129,7 +129,7 @@ export default function SettleModal({
                 <div className="inp-wrap">
                   <input type="number" step="1" min="0" value={deductions}
                     onChange={e => setDeductions(e.target.value)} placeholder="0" />
-                  <span className="curr">ج.م</span>
+                  <span className="curr">ر.س</span>
                 </div>
               </div>
               <div className="adj-group full">
@@ -137,7 +137,7 @@ export default function SettleModal({
                 <div className="inp-wrap">
                   <input type="number" step="1" min="0" value={advance}
                     onChange={e => setAdvance(e.target.value)} placeholder="0" />
-                  <span className="curr">ج.م</span>
+                  <span className="curr">ر.س</span>
                 </div>
               </div>
             </div>
@@ -160,7 +160,7 @@ export default function SettleModal({
             </div>
             <div className="net-result">
               <span className="net-lbl">الراتب الصافي</span>
-              <span className="net-val">{net.toFixed(0)} <em>ج.م</em></span>
+              <span className="net-val">{net.toFixed(0)} <em>ر.س</em></span>
             </div>
           </div>
 

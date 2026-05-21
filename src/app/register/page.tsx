@@ -19,6 +19,7 @@ export default function RegisterPage() {
     phoneNumber: '',
     nationalId: '',
     address: '',
+    hourlyRate: '',
   });
   
   const [idFile, setIdFile] = useState<File | null>(null);
@@ -250,6 +251,27 @@ export default function RegisterPage() {
                   required
                 />
                 <ErrorLabel message={fieldErrors.address} />
+              </div>
+            </div>
+
+            <div className="form-section">
+              <h3 className="section-label-reg">المرتب</h3>
+              <div className="form-group">
+                <label className="form-label">سعر الساعة (ر.س)</label>
+                <input
+                  name="hourlyRate"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  className="form-input"
+                  value={formData.hourlyRate}
+                  onChange={handleChange}
+                  placeholder="مثال: 50"
+                  required
+                />
+                <p style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 600, marginTop: '6px' }}>
+                  المرتب الشهري = ساعات العمل × سعر الساعة
+                </p>
               </div>
             </div>
 

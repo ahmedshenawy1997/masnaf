@@ -63,12 +63,12 @@ function EmployeeCard({ emp, onUpdate, onSave, onReset }: {
 
         <div className="ec-col hide-sm">
           <span className="col-lbl">الراتب الأساسي</span>
-          <span className="col-val">{emp.baseSalary.toLocaleString()} ج.م</span>
+          <span className="col-val">{emp.baseSalary.toLocaleString()} ر.س</span>
         </div>
 
         <div className="ec-col">
           <span className="col-lbl">الصافي</span>
-          <span className={`net-val ${net < 0 ? 'neg' : ''}`}>{net.toLocaleString()} ج.م</span>
+          <span className={`net-val ${net < 0 ? 'neg' : ''}`}>{net.toLocaleString()} ر.س</span>
         </div>
 
         <div className="ec-right">
@@ -87,9 +87,9 @@ function EmployeeCard({ emp, onUpdate, onSave, onReset }: {
           <div className="formula-row">
             <div className="f-chip blue"><Clock size={13} />{emp.totalHours.toFixed(2)} ساعة</div>
             <span className="f-op">×</span>
-            <div className="f-chip gray">{emp.hourlyRate.toFixed(0)} ج.م/ساعة</div>
+            <div className="f-chip gray">{emp.hourlyRate.toFixed(0)} ر.س/ساعة</div>
             <span className="f-op">=</span>
-            <div className="f-chip green"><Banknote size={13} />{emp.baseSalary.toLocaleString()} ج.م</div>
+            <div className="f-chip green"><Banknote size={13} />{emp.baseSalary.toLocaleString()} ر.س</div>
           </div>
 
           {/* Adjustments */}
@@ -99,7 +99,7 @@ function EmployeeCard({ emp, onUpdate, onSave, onReset }: {
               <div className="adj-inp">
                 <input type="number" min="0" value={emp.bonus} disabled={!editable}
                   onChange={e => onUpdate(emp.id, 'bonus', parseFloat(e.target.value) || 0)} placeholder="0" />
-                <span>ج.م</span>
+                <span>ر.س</span>
               </div>
             </div>
             <div className="adj red">
@@ -107,7 +107,7 @@ function EmployeeCard({ emp, onUpdate, onSave, onReset }: {
               <div className="adj-inp">
                 <input type="number" min="0" value={emp.deductions} disabled={!editable}
                   onChange={e => onUpdate(emp.id, 'deductions', parseFloat(e.target.value) || 0)} placeholder="0" />
-                <span>ج.م</span>
+                <span>ر.س</span>
               </div>
             </div>
             <div className="adj amber">
@@ -115,7 +115,7 @@ function EmployeeCard({ emp, onUpdate, onSave, onReset }: {
               <div className="adj-inp">
                 <input type="number" min="0" value={emp.advance} disabled={!editable}
                   onChange={e => onUpdate(emp.id, 'advance', parseFloat(e.target.value) || 0)} placeholder="0" />
-                <span>ج.م</span>
+                <span>ر.س</span>
               </div>
             </div>
           </div>
@@ -135,7 +135,7 @@ function EmployeeCard({ emp, onUpdate, onSave, onReset }: {
             </div>
             <div className="nb-right">
               <span className="nb-lbl">الصافي</span>
-              <span className="nb-val">{net.toFixed(0)} ج.م</span>
+              <span className="nb-val">{net.toFixed(0)} ر.س</span>
             </div>
           </div>
 
@@ -366,7 +366,7 @@ export default function PayrollPage() {
               <Wallet size={22} />
               <div>
                 <span className="s-lbl">إجمالي الرواتب الصافية</span>
-                <span className="s-val">{stats.totalNet.toLocaleString('ar-EG')} ج.م</span>
+                <span className="s-val">{stats.totalNet.toLocaleString('ar-EG')} ر.س</span>
               </div>
             </div>
             <div className="stat" style={{'--c':'#8b5cf6'} as any}>
@@ -388,14 +388,14 @@ export default function PayrollPage() {
               <TrendingUp size={22} />
               <div>
                 <span className="s-lbl">إجمالي المكافآت</span>
-                <span className="s-val">{stats.totalBonuses.toLocaleString()} ج.م</span>
+                <span className="s-val">{stats.totalBonuses.toLocaleString()} ر.س</span>
               </div>
             </div>
             <div className="stat" style={{'--c':'#ef4444'} as any}>
               <TrendingDown size={22} />
               <div>
                 <span className="s-lbl">خصومات وسلف</span>
-                <span className="s-val">{stats.totalDeductions.toLocaleString()} ج.م</span>
+                <span className="s-val">{stats.totalDeductions.toLocaleString()} ر.س</span>
               </div>
             </div>
           </div>

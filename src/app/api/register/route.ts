@@ -20,6 +20,7 @@ export async function POST(req: Request) {
     const phoneNumber = (formData.get('phoneNumber') as string) || "";
     const nationalId = formData.get('nationalId') as string;
     const address = (formData.get('address') as string) || "";
+    const hourlyRateStr = (formData.get('hourlyRate') as string) || '0';
     const idFile = formData.get('idPhoto') as File | null;
 
     // Advanced Validation (Server-side)
@@ -99,7 +100,7 @@ export async function POST(req: Request) {
           nationalId,
           address,
           dateOfHiring: new Date(),
-          hourlyRate: 0, 
+          hourlyRate: parseFloat(hourlyRateStr) || 0,
           idPhoto: idPhotoUrl,
         }
       });

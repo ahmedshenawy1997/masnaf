@@ -72,7 +72,7 @@ export default function PayrollHistory({
                 {/* Net amount — big */}
                 <div className="ph-net-amount">
                   {(record.netAmount || 0).toFixed(0)}
-                  <span className="ph-currency">ج.م</span>
+                  <span className="ph-currency">ر.س</span>
                 </div>
 
                 {/* Breakdown */}
@@ -82,7 +82,7 @@ export default function PayrollHistory({
                     <span>{(record.totalHours || 0).toFixed(1)} ساعة</span>
                   </div>
                   <div className="ph-break-item base">
-                    <span>أساسي: {((record.totalHours || 0) * (record.hourlyRate || 0)).toFixed(0)} ج.م</span>
+                    <span>أساسي: {((record.totalHours || 0) * (record.hourlyRate || 0)).toFixed(0)} ر.س</span>
                   </div>
                   {record.bonus > 0 && (
                     <div className="ph-break-item green">

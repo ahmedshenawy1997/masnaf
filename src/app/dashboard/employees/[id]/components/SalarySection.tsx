@@ -106,13 +106,13 @@ export default function SalarySection({
                 <div className="rate-edit">
                   <input type="number" value={newRate} autoFocus
                     onChange={e => setNewRate(e.target.value)} />
-                  <span className="curr">ج.م</span>
+                  <span className="curr">ر.س</span>
                   <button className="r-save" onClick={saveRate} disabled={saving}><Check size={13} /></button>
                   <button className="r-cancel" onClick={() => setEditing(false)}><X size={13} /></button>
                 </div>
               ) : (
                 <div className="rate-view">
-                  <span className="f-num purple">{profile.hourlyRate.toFixed(0)} ج.م</span>
+                  <span className="f-num purple">{profile.hourlyRate.toFixed(0)} ر.س</span>
                   {isAdmin && (
                     <button className="edit-rate-btn" onClick={() => setEditing(true)}>
                       <Edit2 size={12} />
@@ -128,7 +128,7 @@ export default function SalarySection({
           {/* Result block */}
           <div className="f-result">
             <span className="f-lbl">الراتب الشهري</span>
-            <span className="result-num">{loading ? '...' : monthSalary.toLocaleString('ar-EG')} ج.م</span>
+            <span className="result-num">{loading ? '...' : monthSalary.toLocaleString('ar-EG')} ر.س</span>
           </div>
         </div>
       </div>
@@ -140,7 +140,7 @@ export default function SalarySection({
         </div>
         <div className="st-body">
           <span className="st-label">{hasDues ? 'مستحقات غير مسددة' : 'لا توجد مستحقات'}</span>
-          <span className="st-amount">{loading ? '...' : remainingBalance.toLocaleString('ar-EG')} ج.م</span>
+          <span className="st-amount">{loading ? '...' : remainingBalance.toLocaleString('ar-EG')} ر.س</span>
           <span className="st-sub">
             {loading ? '' : `${hoursLabel(remainingHours)} غير محسوبة`}
           </span>
@@ -157,19 +157,19 @@ export default function SalarySection({
         <div className="qs-row">
           <div className="qs-icon"><TrendingUp size={15} /></div>
           <span className="qs-label">المدفوع هذا الشهر</span>
-          <span className="qs-val green">{loading ? '...' : monthPaid.toLocaleString('ar-EG')} ج.م</span>
+          <span className="qs-val green">{loading ? '...' : monthPaid.toLocaleString('ar-EG')} ر.س</span>
         </div>
         <div className="qs-divider" />
         <div className="qs-row">
           <div className="qs-icon"><Banknote size={15} /></div>
           <span className="qs-label">إجمالي المدفوع</span>
-          <span className="qs-val">{loading ? '...' : allTimePaid.toLocaleString('ar-EG')} ج.م</span>
+          <span className="qs-val">{loading ? '...' : allTimePaid.toLocaleString('ar-EG')} ر.س</span>
         </div>
         <div className="qs-divider" />
         <div className="qs-row">
           <div className="qs-icon"><CreditCard size={15} /></div>
           <span className="qs-label">سعر الساعة الحالي</span>
-          <span className="qs-val">{profile.hourlyRate.toFixed(0)} ج.م</span>
+          <span className="qs-val">{profile.hourlyRate.toFixed(0)} ر.س</span>
         </div>
       </div>
 

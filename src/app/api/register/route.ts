@@ -78,6 +78,23 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Photo upload process failed" }, { status: 400 });
     }
 
+    // Health Certificate (optional)
+    let healthCertUrl = '';
+    const healthFile = formData.get('healthCertificate') as File | null;
+    if (healthFile && healthFile.size > 0) {
+      try {
+        const bytes = await healthFile.arrayBuffer();
+        const buffer = Buffer.from(bytes);
+        const uploadDir = join(process.cwd(), 'public', 'uploads', 'ids');
+        if (!existsSync(uploadDir)) await mkdir(uploadDir, { recursive: true });
+        const fileName = `${Date.now()}-health-${username}-${healthFile.name.replace(/\s+/g, '-')}`;
+        await writeFile(join(uploadDir, fileName), buffer);
+        healthCertUrl = `/uploads/ids/${fileName}`;
+      } catch (err) {
+        console.error('Health cert upload error:', err);
+      }
+    }
+
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -102,6 +119,7 @@ export async function POST(req: Request) {
           dateOfHiring: new Date(),
           hourlyRate: parseFloat(hourlyRateStr) || 0,
           idPhoto: idPhotoUrl,
+          healthCertificate: healthCertUrl || null,
         }
       });
 

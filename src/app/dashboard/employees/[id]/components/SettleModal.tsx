@@ -33,10 +33,16 @@ export default function SettleModal({
   const net      = currentSalary + bonusVal - dedVal - advVal;
 
   const hoursLabel = (h: number) => {
-    const full = Math.floor(h);
-    const mins = Math.round((h - full) * 60);
+    const rounded = Math.round(h * 60);
+    const full = Math.floor(rounded / 60);
+    const mins = rounded % 60;
     return mins > 0 ? `${full}س ${mins}د` : `${full} ساعة`;
   };
+
+  const fmt = (n: number) =>
+    Math.round(n * 100) / 100 === Math.round(n)
+      ? Math.round(n).toLocaleString('ar-EG')
+      : (Math.round(n * 100) / 100).toLocaleString('ar-EG', { maximumFractionDigits: 2 });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -107,7 +113,7 @@ export default function SettleModal({
               <div className="ban-icon green"><DollarSign size={16} /></div>
               <div>
                 <span className="ban-lbl">الراتب المحسوب</span>
-                <span className="ban-val main">{currentSalary.toLocaleString('ar-EG')} ر.س</span>
+                <span className="ban-val main">{fmt(currentSalary)} ر.س</span>
               </div>
             </div>
           </div>
@@ -153,14 +159,14 @@ export default function SettleModal({
           {/* NET TOTAL */}
           <div className={`net-box ${net < 0 ? 'danger' : ''}`}>
             <div className="net-breakdown">
-              <span className="nb-base">{currentSalary.toFixed(0)}</span>
-              {bonusVal > 0 && <span className="nb-plus">+ {bonusVal.toFixed(0)}</span>}
-              {dedVal   > 0 && <span className="nb-minus">− {dedVal.toFixed(0)}</span>}
-              {advVal   > 0 && <span className="nb-minus">− {advVal.toFixed(0)}</span>}
+              <span className="nb-base">{fmt(currentSalary)}</span>
+              {bonusVal > 0 && <span className="nb-plus">+ {fmt(bonusVal)}</span>}
+              {dedVal   > 0 && <span className="nb-minus">− {fmt(dedVal)}</span>}
+              {advVal   > 0 && <span className="nb-minus">− {fmt(advVal)}</span>}
             </div>
             <div className="net-result">
               <span className="net-lbl">الراتب الصافي</span>
-              <span className="net-val">{net.toFixed(0)} <em>ر.س</em></span>
+              <span className="net-val">{fmt(net)} <em>ر.س</em></span>
             </div>
           </div>
 

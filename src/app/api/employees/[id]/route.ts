@@ -38,14 +38,19 @@ export async function PATCH(
 
     if (contentType.includes('multipart/form-data')) {
       const formData = await req.formData();
-      const nationalId = formData.get('nationalId') as string;
+      const nationalId  = formData.get('nationalId')  as string;
       const phoneNumber = formData.get('phoneNumber') as string;
-      const address = formData.get('address') as string;
-      const healthFile = formData.get('healthCertificate') as File | null;
+      const address     = formData.get('address')     as string;
+      const hourlyRateStr = formData.get('hourlyRate') as string | null;
+      const healthFile  = formData.get('healthCertificate') as File | null;
 
-      if (nationalId) updateData.nationalId = nationalId;
+      if (nationalId)  updateData.nationalId  = nationalId;
       if (phoneNumber) updateData.phoneNumber = phoneNumber;
-      if (address) updateData.address = address;
+      if (address)     updateData.address     = address;
+      if (isAdmin && hourlyRateStr) {
+        const rate = parseFloat(hourlyRateStr);
+        if (!isNaN(rate) && rate >= 0) updateData.hourlyRate = rate;
+      }
 
       // ID Photo
       const file = formData.get('idPhoto') as File | null;

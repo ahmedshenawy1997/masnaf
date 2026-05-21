@@ -70,10 +70,16 @@ export default function SalarySection({
   const hasDues          = remainingBalance > 0;
 
   const hoursLabel = (h: number) => {
-    const full = Math.floor(h);
-    const mins = Math.round((h - full) * 60);
+    const rounded = Math.round(h * 60); // total minutes rounded
+    const full = Math.floor(rounded / 60);
+    const mins = rounded % 60;
     return mins > 0 ? `${full} س ${mins} د` : `${full} ساعة`;
   };
+
+  const fmt = (n: number) =>
+    Math.round(n * 100) / 100 === Math.round(n)
+      ? Math.round(n).toLocaleString('ar-EG')
+      : (Math.round(n * 100) / 100).toLocaleString('ar-EG', { maximumFractionDigits: 2 });
 
   return (
     <div className="sw">
@@ -128,7 +134,7 @@ export default function SalarySection({
           {/* Result block */}
           <div className="f-result">
             <span className="f-lbl">الراتب الشهري</span>
-            <span className="result-num">{loading ? '...' : monthSalary.toLocaleString('ar-EG')} ر.س</span>
+            <span className="result-num">{loading ? '...' : fmt(monthSalary)} ر.س</span>
           </div>
         </div>
       </div>
@@ -140,7 +146,7 @@ export default function SalarySection({
         </div>
         <div className="st-body">
           <span className="st-label">{hasDues ? 'مستحقات غير مسددة' : 'لا توجد مستحقات'}</span>
-          <span className="st-amount">{loading ? '...' : remainingBalance.toLocaleString('ar-EG')} ر.س</span>
+          <span className="st-amount">{loading ? '...' : fmt(remainingBalance)} ر.س</span>
           <span className="st-sub">
             {loading ? '' : `${hoursLabel(remainingHours)} غير محسوبة`}
           </span>
@@ -157,13 +163,13 @@ export default function SalarySection({
         <div className="qs-row">
           <div className="qs-icon"><TrendingUp size={15} /></div>
           <span className="qs-label">المدفوع هذا الشهر</span>
-          <span className="qs-val green">{loading ? '...' : monthPaid.toLocaleString('ar-EG')} ر.س</span>
+          <span className="qs-val green">{loading ? '...' : fmt(monthPaid)} ر.س</span>
         </div>
         <div className="qs-divider" />
         <div className="qs-row">
           <div className="qs-icon"><Banknote size={15} /></div>
           <span className="qs-label">إجمالي المدفوع</span>
-          <span className="qs-val">{loading ? '...' : allTimePaid.toLocaleString('ar-EG')} ر.س</span>
+          <span className="qs-val">{loading ? '...' : fmt(allTimePaid)} ر.س</span>
         </div>
         <div className="qs-divider" />
         <div className="qs-row">

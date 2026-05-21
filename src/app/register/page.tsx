@@ -22,7 +22,8 @@ export default function RegisterPage() {
     hourlyRate: '',
   });
   
-  const [idFile, setIdFile] = useState<File | null>(null);
+  const [idFile, setIdFile]     = useState<File | null>(null);
+  const [healthFile, setHealthFile] = useState<File | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [generalError, setGeneralError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -86,7 +87,8 @@ export default function RegisterPage() {
 
     const data = new FormData();
     Object.entries(formData).forEach(([key, value]) => data.append(key, value));
-    if (idFile) data.append('idPhoto', idFile);
+    if (idFile)     data.append('idPhoto', idFile);
+    if (healthFile) data.append('healthCertificate', healthFile);
 
     try {
       const res = await fetch('/api/register', {
@@ -296,6 +298,27 @@ export default function RegisterPage() {
                 <ErrorLabel message={fieldErrors.idPhoto} />
               </div>
             </div>
+
+            <div className="form-section">
+              <h3 className="section-label-reg">{t('health_certificate')}</h3>
+              <div className="file-upload-area-custom">
+                <input
+                  type="file"
+                  id="healthCertificate"
+                  style={{ display: 'none' }}
+                  onChange={e => setHealthFile(e.target.files?.[0] || null)}
+                  accept="image/*,application/pdf"
+                />
+                <label htmlFor="healthCertificate" className={`file-upload-label-reg ${healthFile ? 'has-file health' : ''}`}>
+                  {healthFile ? <Check size={24} className="text-success" /> : <Upload size={24} />}
+                  <div className="flex flex-col text-start">
+                    <span className="font-bold">{healthFile ? healthFile.name : 'رفع الشهادة الصحية'}</span>
+                    {!healthFile && <span className="text-xs text-muted">اختياري — صورة أو PDF</span>}
+                    {healthFile && <span className="text-xs text-muted">اضغط للتغيير</span>}
+                  </div>
+                </label>
+              </div>
+            </div>
           </div>
 
           <button type="submit" className="btn btn-primary w-full register-btn-p" disabled={loading}>
@@ -326,6 +349,7 @@ export default function RegisterPage() {
         }
         .file-upload-label-reg:hover { border-color: var(--primary); background: #f0f9ff; }
         .file-upload-label-reg.has-file { border-color: #10b981; background: #f0fdf4; border-style: solid; }
+        .file-upload-label-reg.health { border-color: #10b981; background: #f0fdf4; border-style: solid; }
         .file-upload-label-reg.error { border-color: #ef4444; background: #fff1f2; }
 
         .form-input.error { border-color: #ef4444; background: #fff1f2; }

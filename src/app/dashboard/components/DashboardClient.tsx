@@ -1,6 +1,6 @@
 "use client";
 
-import { Users, Clock, LogIn, LogOut, FileText, X, User, CalendarCheck } from 'lucide-react';
+import { Users, Clock, LogIn, LogOut, FileText, X, User, CalendarCheck, Bell, Send, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useLanguage } from '@/lib/LanguageContext';
@@ -11,6 +11,8 @@ type EmployeeSummary = {
   jobTitle?: string;
   profilePhoto?: string | null;
 };
+
+type NoticeType = { id: string; message: string } | null;
 
 function EmployeeModal({ 
   title, 
@@ -129,15 +131,264 @@ function EmployeeModal({
   );
 }
 
+// ─── Notice Banner (shown to employees) ─────────────────────────────────────
+function NoticeBanner({ message }: { message: string }) {
+  const [visible, setVisible] = useState(true);
+  if (!visible) return null;
+  return (
+    <div className="notice-banner">
+      <div className="notice-banner-icon">
+        <Bell size={20} />
+      </div>
+      <p className="notice-banner-text">{message}</p>
+      <button className="notice-banner-close" onClick={() => setVisible(false)} title="إغلاق">
+        <X size={16} />
+      </button>
+      <style jsx>{`
+        .notice-banner {
+          display: flex; align-items: flex-start; gap: 12px;
+          background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+          border: 1.5px solid #f59e0b;
+          border-radius: 18px; padding: 16px 18px; margin-bottom: 1.5rem;
+          box-shadow: 0 4px 20px rgba(245,158,11,0.15);
+          animation: noticePop 0.35s cubic-bezier(.34,1.56,.64,1);
+          position: relative;
+        }
+        @keyframes noticePop { from { opacity:0; transform:scale(0.97) translateY(-6px); } to { opacity:1; transform:scale(1) translateY(0); } }
+        .notice-banner-icon {
+          width: 38px; height: 38px; border-radius: 12px;
+          background: rgba(245,158,11,0.2); color: #b45309;
+          display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .notice-banner-text {
+          flex: 1; font-size: 0.95rem; font-weight: 700;
+          color: #78350f; line-height: 1.5; margin: 0; padding-top: 5px;
+          white-space: pre-wrap; word-break: break-word;
+        }
+        .notice-banner-close {
+          background: rgba(245,158,11,0.2); border: none; border-radius: 8px;
+          width: 28px; height: 28px; cursor: pointer; flex-shrink: 0;
+          display: flex; align-items: center; justify-content: center;
+          color: #b45309; transition: 0.15s; margin-top: 3px;
+        }
+        .notice-banner-close:hover { background: rgba(245,158,11,0.4); }
+      `}</style>
+    </div>
+  );
+}
+
+// ─── Notice Editor (admin only) ──────────────────────────────────────────────
+function NoticeEditor({ initialNotice }: { initialNotice: NoticeType }) {
+  const [savedMessage, setSavedMessage] = useState(initialNotice?.message || '');
+  const [draft, setDraft] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [status, setStatus] = useState<'idle' | 'saved' | 'error'>('idle');
+
+  const flashStatus = (s: 'saved' | 'error') => {
+    setStatus(s);
+    setTimeout(() => setStatus('idle'), 2500);
+  };
+
+  const save = async () => {
+    if (!draft.trim()) return;
+    setSaving(true);
+    try {
+      const res = await fetch('/api/notice', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: draft })
+      });
+      if (res.ok) {
+        setSavedMessage(draft);
+        setDraft('');
+        flashStatus('saved');
+      } else { flashStatus('error'); }
+    } catch { flashStatus('error'); }
+    finally { setSaving(false); }
+  };
+
+  const deleteNotice = async () => {
+    setDeleting(true);
+    try {
+      const res = await fetch('/api/notice', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: '' })
+      });
+      if (res.ok) { setSavedMessage(''); flashStatus('saved'); }
+      else { flashStatus('error'); }
+    } catch { flashStatus('error'); }
+    finally { setDeleting(false); }
+  };
+
+  return (
+    <div className="notice-editor-card">
+      {/* Header */}
+      <div className="notice-editor-header">
+        <div className="notice-editor-icon"><Bell size={20} /></div>
+        <div>
+          <h3 className="notice-editor-title">إشعار يومي</h3>
+          <p className="notice-editor-sub">اكتب رسالة تظهر لجميع الموظفين</p>
+        </div>
+        {status === 'saved' && <span className="notice-status-badge saved">✓ تم الحفظ</span>}
+        {status === 'error'  && <span className="notice-status-badge error">✗ خطأ</span>}
+      </div>
+
+      {/* Saved notice display — appears after saving */}
+      {savedMessage && (
+        <div className="notice-saved-display">
+          <div className="notice-saved-icon"><Bell size={16} /></div>
+          <p className="notice-saved-text">{savedMessage}</p>
+          <button
+            className="notice-delete-btn"
+            onClick={deleteNotice}
+            disabled={deleting}
+            title="حذف الإشعار"
+          >
+            <Trash2 size={15} />
+            {deleting ? 'جاري الحذف...' : 'حذف'}
+          </button>
+        </div>
+      )}
+
+      {/* Divider when there's a saved message */}
+      {savedMessage && (
+        <div className="notice-divider">
+          <span>إضافة إشعار جديد</span>
+        </div>
+      )}
+
+      {/* Write area */}
+      <textarea
+        className="notice-textarea"
+        value={draft}
+        onChange={e => setDraft(e.target.value)}
+        placeholder={savedMessage ? 'اكتب إشعاراً جديداً لاستبدال الحالي...' : 'اكتب هنا الإشعار أو التنبيه اليومي للموظفين...'}
+        rows={3}
+        maxLength={500}
+        dir="rtl"
+      />
+      <div className="notice-editor-footer">
+        <span className="notice-char-count">{draft.length}/500</span>
+        <button className="notice-btn-save" onClick={save} disabled={saving || !draft.trim()}>
+          <Send size={15} />
+          {saving ? 'جاري الإرسال...' : 'نشر الإشعار'}
+        </button>
+      </div>
+
+      <style jsx>{`
+        .notice-editor-card {
+          background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+          border: 1.5px solid #e2e8f0; border-radius: 20px; padding: 20px;
+          margin-bottom: 1.5rem; box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+          transition: box-shadow 0.2s;
+        }
+        .notice-editor-card:focus-within {
+          border-color: #f59e0b; box-shadow: 0 0 0 3px rgba(245,158,11,0.12);
+        }
+        .notice-editor-header {
+          display: flex; align-items: center; gap: 12px; margin-bottom: 14px;
+        }
+        .notice-editor-icon {
+          width: 42px; height: 42px; border-radius: 13px;
+          background: linear-gradient(135deg, #fbbf24, #f59e0b);
+          color: #fff; display: flex; align-items: center; justify-content: center;
+          flex-shrink: 0; box-shadow: 0 3px 10px rgba(245,158,11,0.3);
+        }
+        .notice-editor-title { font-size: 1rem; font-weight: 800; color: #1e293b; margin: 0 0 2px; }
+        .notice-editor-sub { font-size: 0.78rem; color: #94a3b8; margin: 0; font-weight: 500; }
+        .notice-status-badge {
+          margin-right: auto; font-size: 0.78rem; font-weight: 800;
+          padding: 4px 12px; border-radius: 8px;
+        }
+        .notice-status-badge.saved { background: #dcfce7; color: #16a34a; }
+        .notice-status-badge.error { background: #fee2e2; color: #b91c1c; }
+
+        /* Saved notice display */
+        .notice-saved-display {
+          display: flex; align-items: flex-start; gap: 10px;
+          background: linear-gradient(135deg, #fef9ec 0%, #fef3c7 100%);
+          border: 1.5px solid #fcd34d; border-radius: 14px;
+          padding: 14px 16px; margin-bottom: 12px;
+          animation: noticePop 0.3s cubic-bezier(.34,1.56,.64,1);
+        }
+        @keyframes noticePop {
+          from { opacity:0; transform:translateY(-8px) scale(0.97); }
+          to   { opacity:1; transform:translateY(0)   scale(1); }
+        }
+        .notice-saved-icon {
+          width: 32px; height: 32px; border-radius: 10px;
+          background: rgba(245,158,11,0.2); color: #b45309;
+          display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .notice-saved-text {
+          flex: 1; font-size: 0.9rem; font-weight: 700;
+          color: #78350f; line-height: 1.5; margin: 0; padding-top: 4px;
+          white-space: pre-wrap; word-break: break-word;
+        }
+        .notice-delete-btn {
+          display: flex; align-items: center; gap: 5px;
+          background: #fee2e2; color: #b91c1c; border: none;
+          border-radius: 10px; padding: 7px 12px;
+          font-size: 0.8rem; font-weight: 700; cursor: pointer;
+          transition: 0.2s; flex-shrink: 0; white-space: nowrap;
+        }
+        .notice-delete-btn:hover:not(:disabled) { background: #fecaca; }
+        .notice-delete-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* Divider */
+        .notice-divider {
+          display: flex; align-items: center; gap: 10px;
+          margin: 14px 0 12px; color: #94a3b8; font-size: 0.75rem; font-weight: 700;
+        }
+        .notice-divider::before, .notice-divider::after {
+          content: ''; flex: 1; height: 1px; background: #e2e8f0;
+        }
+
+        /* Textarea */
+        .notice-textarea {
+          width: 100%; resize: vertical; min-height: 90px;
+          border: 1.5px solid #e2e8f0; border-radius: 14px;
+          padding: 12px 14px; font-size: 0.93rem; font-family: inherit;
+          color: #1e293b; background: #fff; line-height: 1.6;
+          box-sizing: border-box; outline: none; transition: border-color 0.2s;
+        }
+        .notice-textarea:focus { border-color: #f59e0b; }
+        .notice-textarea::placeholder { color: #cbd5e1; }
+
+        .notice-editor-footer {
+          display: flex; align-items: center; justify-content: space-between; margin-top: 10px;
+        }
+        .notice-char-count { font-size: 0.75rem; color: #94a3b8; font-weight: 600; }
+        .notice-btn-save {
+          display: flex; align-items: center; gap: 6px;
+          background: linear-gradient(135deg, #fbbf24, #f59e0b);
+          color: #fff; border: none; border-radius: 11px;
+          padding: 9px 18px; font-size: 0.85rem; font-weight: 800;
+          cursor: pointer; transition: 0.2s; box-shadow: 0 3px 10px rgba(245,158,11,0.3);
+        }
+        .notice-btn-save:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 5px 15px rgba(245,158,11,0.4); }
+        .notice-btn-save:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+      `}</style>
+    </div>
+  );
+}
+
+// ─── Main Component ───────────────────────────────────────────────────────────
 export default function DashboardClient({ 
   data, 
-  session 
+  session,
+  activeNotice
 }: { 
   data: any, 
-  session: any 
+  session: any,
+  activeNotice: NoticeType
 }) {
   const { t } = useLanguage();
   const [modal, setModal] = useState<'present' | 'absent' | 'active' | 'leave' | null>(null);
+
+  const isAdmin = session.user.role === 'SUPERADMIN' || session.user.role === 'ADMIN';
 
   if (session.user.role === 'EMPLOYEE') {
     return (
@@ -146,6 +397,9 @@ export default function DashboardClient({
           <h1 className="title">{t('welcome')}, {session?.user?.name}</h1>
           <p className="subtitle">{t('today_snapshot')}</p>
         </div>
+
+        {/* Show active notice to employees */}
+        {activeNotice && <NoticeBanner message={activeNotice.message} />}
 
         <div className="metrics-grid">
           <div className="metric-card card">
@@ -201,6 +455,9 @@ export default function DashboardClient({
         <h1 className="title">{t('dashboard')}</h1>
         <p className="subtitle">{t('today_snapshot')}</p>
       </div>
+
+      {/* Notice editor — admin only */}
+      {isAdmin && <NoticeEditor initialNotice={activeNotice} />}
 
       <div className="metrics-grid">
         {/* Present Today — clickable */}

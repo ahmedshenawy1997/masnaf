@@ -1,271 +1,255 @@
 "use client";
 
 import { useState } from 'react';
-import { X, DollarSign, Calculator, AlertCircle } from 'lucide-react';
-import { useLanguage } from '@/lib/LanguageContext';
+import { X, Calculator, AlertCircle, Clock, DollarSign, Award, TrendingDown, CreditCard, FileText } from 'lucide-react';
 
-export default function SettleModal({ 
-  profile, 
-  totalHours, 
-  currentSalary, 
-  onClose, 
-  onSuccess 
-}: { 
-  profile: any; 
-  totalHours: number; 
-  currentSalary: number; 
+export default function SettleModal({
+  profile,
+  totalHours,
+  currentSalary,
+  onClose,
+  onSuccess,
+}: {
+  profile: any;
+  totalHours: number;
+  currentSalary: number;
   onClose: () => void;
   onSuccess: () => void;
 }) {
-  const { t } = useLanguage();
-  const [bonus, setBonus] = useState('0');
+  const [bonus,      setBonus]      = useState('0');
   const [deductions, setDeductions] = useState('0');
-  const [advance, setAdvance] = useState('0');
-  const [notes, setNotes] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState('');
+  const [advance,    setAdvance]    = useState('0');
+  const [notes,      setNotes]      = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [error,      setError]      = useState('');
 
-  const now = new Date();
+  const now   = new Date();
   const month = now.getMonth() + 1;
-  const year = now.getFullYear();
+  const year  = now.getFullYear();
 
-  const bonusVal = parseFloat(bonus) || 0;
-  const dedVal = parseFloat(deductions) || 0;
-  const advVal = parseFloat(advance) || 0;
-  const netAmount = currentSalary + bonusVal - dedVal - advVal;
+  const bonusVal = parseFloat(bonus)      || 0;
+  const dedVal   = parseFloat(deductions) || 0;
+  const advVal   = parseFloat(advance)    || 0;
+  const net      = currentSalary + bonusVal - dedVal - advVal;
+
+  const hoursLabel = (h: number) => {
+    const full = Math.floor(h);
+    const mins = Math.round((h - full) * 60);
+    return mins > 0 ? `${full}س ${mins}د` : `${full} ساعة`;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
+    setSubmitting(true);
     setError('');
-
     try {
       const res = await fetch(`/api/employees/${profile.id}/payroll`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          month,
-          year,
-          totalHours: parseFloat(totalHours.toFixed(2)),
-          hourlyRate: profile.hourlyRate,
-          bonus: bonusVal,
-          deductions: dedVal,
-          advance: advVal,
-          netAmount,
-          notes: notes.trim()
+          month, year,
+          totalHours:  parseFloat(totalHours.toFixed(2)),
+          hourlyRate:  profile.hourlyRate,
+          bonus:       bonusVal,
+          deductions:  dedVal,
+          advance:     advVal,
+          netAmount:   net,
+          notes:       notes.trim(),
         }),
       });
-
       if (res.ok) {
         onSuccess();
       } else {
         const data = await res.json();
-        setError(data.error || 'Failed to process settlement');
+        setError(data.error || 'فشل في التسوية');
       }
-    } catch (err) {
-      setError('An error occurred. Please check your connection.');
+    } catch {
+      setError('خطأ في الاتصال، حاول مرة أخرى');
     } finally {
-      setIsSubmitting(false);
+      setSubmitting(false);
     }
   };
 
   return (
-    <div className="settle-overlay">
-      <div className="settle-modal-glass">
-        <div className="settle-header">
-          <div className="header-icon">
-            <Calculator size={24} />
+    <div className="overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="modal">
+
+        {/* HEADER */}
+        <div className="modal-header">
+          <div className="mh-icon"><Calculator size={22} /></div>
+          <div className="mh-text">
+            <h2>تسوية المرتب</h2>
+            <p>{profile.fullName} — {month}/{year}</p>
           </div>
-          <div className="header-text">
-            <h2>{t('settlement_details')}</h2>
-            <p>{profile.fullName} • {month}/{year}</p>
-          </div>
-          <button onClick={onClose} className="close-btn"><X size={20} /></button>
+          <button className="close-btn" onClick={onClose}><X size={20} /></button>
         </div>
 
-        <form onSubmit={handleSubmit} className="settle-body">
-          <div className="dues-summary-banner">
-             <div className="summary-item">
-               <span className="label">{t('hours_unit')}</span>
-               <span className="value">{totalHours.toFixed(2)}</span>
-             </div>
-             <div className="summary-item">
-               <span className="label">$/{t('hours_unit')}</span>
-               <span className="value">${profile.hourlyRate.toFixed(2)}</span>
-             </div>
-             <div className="summary-item main">
-               <span className="label">{t('calculated_salary')}</span>
-               <span className="value">${(totalHours * profile.hourlyRate).toFixed(2)}</span>
-             </div>
-          </div>
-
-          <div className="input-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-            <div className="form-group-custom">
-              <label>{t('bonuses')}</label>
-              <div className="input-wrapper">
-                <span className="currency">$</span>
-                <input 
-                  type="number" 
-                  step="0.01"
-                  className="modern-input" 
-                  value={bonus}
-                  onChange={(e) => setBonus(e.target.value)}
-                  placeholder="0.00"
-                />
+        <form onSubmit={handleSubmit}>
+          {/* SUMMARY BANNER */}
+          <div className="banner">
+            <div className="ban-item">
+              <div className="ban-icon blue"><Clock size={16} /></div>
+              <div>
+                <span className="ban-lbl">ساعات العمل</span>
+                <span className="ban-val">{hoursLabel(totalHours)}</span>
               </div>
             </div>
-            <div className="form-group-custom">
-              <label>{t('deductions')}</label>
-              <div className="input-wrapper">
-                <span className="currency">$</span>
-                <input 
-                  type="number" 
-                  step="0.01"
-                  className="modern-input danger" 
-                  value={deductions}
-                  onChange={(e) => setDeductions(e.target.value)}
-                  placeholder="0.00"
-                />
+            <div className="ban-sep" />
+            <div className="ban-item">
+              <div className="ban-icon purple"><DollarSign size={16} /></div>
+              <div>
+                <span className="ban-lbl">سعر الساعة</span>
+                <span className="ban-val">{profile.hourlyRate.toFixed(0)} ج.م</span>
+              </div>
+            </div>
+            <div className="ban-sep" />
+            <div className="ban-item">
+              <div className="ban-icon green"><DollarSign size={16} /></div>
+              <div>
+                <span className="ban-lbl">الراتب المحسوب</span>
+                <span className="ban-val main">{currentSalary.toLocaleString('ar-EG')} ج.م</span>
               </div>
             </div>
           </div>
 
-          <div className="form-group-custom">
-            <label>{t('advances')}</label>
-            <div className="input-wrapper">
-              <span className="currency">$</span>
-              <input 
-                type="number" 
-                step="0.01"
-                className="modern-input warning" 
-                value={advance}
-                onChange={(e) => setAdvance(e.target.value)}
-                placeholder="0.00"
-                style={{ borderColor: advVal > 0 ? '#f59e0b' : '#f1f5f9' }}
-              />
+          {/* ADJUSTMENTS */}
+          <div className="adj-section">
+            <span className="adj-title">التعديلات</span>
+            <div className="adj-grid">
+              <div className="adj-group">
+                <label className="green-lbl"><Award size={13} /> مكافأة</label>
+                <div className="inp-wrap">
+                  <input type="number" step="1" min="0" value={bonus}
+                    onChange={e => setBonus(e.target.value)} placeholder="0" />
+                  <span className="curr">ج.م</span>
+                </div>
+              </div>
+              <div className="adj-group">
+                <label className="red-lbl"><TrendingDown size={13} /> خصم</label>
+                <div className="inp-wrap">
+                  <input type="number" step="1" min="0" value={deductions}
+                    onChange={e => setDeductions(e.target.value)} placeholder="0" />
+                  <span className="curr">ج.م</span>
+                </div>
+              </div>
+              <div className="adj-group full">
+                <label className="amber-lbl"><CreditCard size={13} /> سلفة</label>
+                <div className="inp-wrap">
+                  <input type="number" step="1" min="0" value={advance}
+                    onChange={e => setAdvance(e.target.value)} placeholder="0" />
+                  <span className="curr">ج.م</span>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div className="form-group-custom full">
-            <label>{t('note')}</label>
-            <textarea 
-              className="modern-textarea" 
-              placeholder={t('details_placeholder')}
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-            />
+          {/* NOTES */}
+          <div className="notes-group">
+            <label><FileText size={13} /> ملاحظات</label>
+            <textarea value={notes} onChange={e => setNotes(e.target.value)}
+              placeholder="أي ملاحظات إضافية..." rows={2} />
           </div>
 
-          <div className="final-total-box">
-             <div className="total-label">
-                <span className="title">{t('net_salary')}</span>
-                <span className="subtitle">{t('ready_to_settle') || 'Final amount to record'}</span>
-             </div>
-             <div className="total-value">${netAmount.toFixed(2)}</div>
+          {/* NET TOTAL */}
+          <div className={`net-box ${net < 0 ? 'danger' : ''}`}>
+            <div className="net-breakdown">
+              <span className="nb-base">{currentSalary.toFixed(0)}</span>
+              {bonusVal > 0 && <span className="nb-plus">+ {bonusVal.toFixed(0)}</span>}
+              {dedVal   > 0 && <span className="nb-minus">− {dedVal.toFixed(0)}</span>}
+              {advVal   > 0 && <span className="nb-minus">− {advVal.toFixed(0)}</span>}
+            </div>
+            <div className="net-result">
+              <span className="net-lbl">الراتب الصافي</span>
+              <span className="net-val">{net.toFixed(0)} <em>ج.م</em></span>
+            </div>
           </div>
 
-          {error && <div className="error-badge"><AlertCircle size={14} /> {error}</div>}
+          {error && (
+            <div className="err-msg"><AlertCircle size={14} /> {error}</div>
+          )}
 
-          <div className="modal-actions-custom">
-            <button type="button" onClick={onClose} className="btn-secondary-custom">{t('cancel')}</button>
-            <button 
-              type="submit" 
-              disabled={isSubmitting || netAmount < 0}
-              className="btn-primary-custom"
-            >
-              {isSubmitting ? <div className="spinner-sm" /> : t('pay_now')}
+          {/* ACTIONS */}
+          <div className="modal-actions">
+            <button type="button" className="btn-cancel" onClick={onClose}>إلغاء</button>
+            <button type="submit" className="btn-pay" disabled={submitting || net < 0}>
+              {submitting ? <div className="spin" /> : 'تأكيد الدفع'}
             </button>
           </div>
         </form>
       </div>
 
       <style jsx>{`
-        .settle-overlay {
-          position: fixed; inset: 0; z-index: 999;
-          background: rgba(15, 23, 42, 0.6);
-          backdrop-filter: blur(8px);
-          display: flex; align-items: center; justify-content: center; padding: 1rem;
-        }
-        .settle-modal-glass {
-          background: white; border-radius: 28px; width: 100%; max-width: 500px;
-          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-          overflow: hidden; border: 1px solid rgba(255,255,255,0.2);
-        }
-        .settle-header {
-          padding: 24px; border-bottom: 1px solid #f1f5f9;
-          display: flex; align-items: center; gap: 16px;
-        }
-        .header-icon {
-          width: 48px; height: 48px; background: rgba(var(--primary-rgb), 0.1);
-          color: var(--primary); border-radius: 16px;
-          display: flex; align-items: center; justify-content: center;
-        }
-        .header-text h2 { margin: 0; font-size: 1.25rem; font-weight: 900; color: #1e293b; }
-        .header-text p { margin: 0; font-size: 0.8rem; color: #64748b; font-weight: 600; }
-        .close-btn { margin-left: auto; background: none; border: none; color: #94a3b8; cursor: pointer; }
-        
-        .settle-body { padding: 24px; display: flex; flex-direction: column; gap: 20px; }
-        
-        .dues-summary-banner {
-          background: #f8fafc; border-radius: 20px; padding: 16px;
-          display: flex; justify-content: space-between; border: 1px solid #f1f5f9;
-        }
-        .summary-item { display: flex; flex-direction: column; gap: 4px; }
-        .summary-item.main .value { color: var(--primary); }
-        .summary-item .label { font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; }
-        .summary-item .value { font-size: 1.1rem; font-weight: 900; color: #334155; }
+        .overlay { position:fixed; inset:0; z-index:999; background:rgba(15,23,42,.65); backdrop-filter:blur(8px); display:flex; align-items:center; justify-content:center; padding:1rem; }
+        .modal { background:white; border-radius:28px; width:100%; max-width:480px; box-shadow:0 25px 60px rgba(0,0,0,.2); overflow:hidden; direction:rtl; }
 
-        .input-grid { display: grid; grid-cols-2; gap: 16px; }
-        .form-group-custom { display: flex; flex-direction: column; gap: 8px; }
-        .form-group-custom label { font-size: 0.85rem; font-weight: 800; color: #475569; }
-        
-        .input-wrapper { position: relative; }
-        .currency { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-weight: 800; color: #94a3b8; }
-        
-        .modern-input {
-          width: 100%; padding: 12px 16px 12px 32px; border-radius: 14px;
-          border: 2px solid #f1f5f9; background: #fff; font-weight: 700;
-          transition: 0.2s; outline: none;
-        }
-        .modern-input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.05); }
-        .modern-input.danger:focus { border-color: var(--danger); }
-        
-        .modern-textarea {
-          width: 100%; padding: 16px; border-radius: 14px; border: 2px solid #f1f5f9;
-          min-height: 80px; font-weight: 600; outline: none; transition: 0.2s;
-        }
-        .modern-textarea:focus { border-color: var(--primary); }
-        
-        .final-total-box {
-          background: #1e293b; border-radius: 20px; padding: 20px;
-          display: flex; justify-content: space-between; align-items: center;
-          color: white;
-        }
-        .total-label .title { display: block; font-weight: 900; font-size: 0.9rem; text-transform: uppercase; }
-        .total-label .subtitle { font-size: 0.7rem; color: #94a3b8; }
-        .total-value { font-size: 2rem; font-weight: 900; }
-        
-        .error-badge {
-          background: #fef2f2; color: #b91c1c; padding: 12px; border-radius: 12px;
-          font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; gap: 8px;
-        }
-        
-        .modal-actions-custom { display: flex; gap: 12px; }
-        .btn-secondary-custom {
-          flex: 1; padding: 14px; border-radius: 14px; border: 2px solid #f1f5f9;
-          font-weight: 800; color: #64748b; background: white; cursor: pointer;
-        }
-        .btn-primary-custom {
-          flex: 2; padding: 14px; border-radius: 14px; border: none;
-          background: var(--primary); color: white; font-weight: 900; cursor: pointer;
-          box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.2);
-        }
-        
-        .spinner-sm {
-          width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.3);
-          border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        /* HEADER */
+        .modal-header { display:flex; align-items:center; gap:14px; padding:22px 24px; border-bottom:1px solid #f1f5f9; }
+        .mh-icon { width:46px; height:46px; background:linear-gradient(135deg,#eff6ff,#e0e7ff); color:#3b82f6; border-radius:14px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+        .mh-text h2 { margin:0; font-size:1.1rem; font-weight:900; color:#1e293b; }
+        .mh-text p  { margin:0; font-size:.78rem; color:#64748b; font-weight:600; }
+        .close-btn { margin-right:auto; background:none; border:none; color:#94a3b8; cursor:pointer; padding:6px; border-radius:8px; display:flex; }
+        .close-btn:hover { background:#f1f5f9; color:#64748b; }
+
+        form { padding:20px 24px; display:flex; flex-direction:column; gap:16px; }
+
+        /* BANNER */
+        .banner { display:flex; align-items:center; background:#f8fafc; border-radius:16px; padding:14px 16px; border:1px solid #f1f5f9; gap:12px; flex-wrap:wrap; }
+        .ban-item { display:flex; align-items:center; gap:10px; flex:1; min-width:100px; }
+        .ban-icon { width:32px; height:32px; border-radius:9px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+        .ban-icon.blue   { background:#eff6ff; color:#2563eb; }
+        .ban-icon.purple { background:#f5f3ff; color:#7c3aed; }
+        .ban-icon.green  { background:#f0fdf4; color:#16a34a; }
+        .ban-item > div  { display:flex; flex-direction:column; gap:2px; }
+        .ban-lbl { font-size:.6rem; font-weight:800; color:#94a3b8; text-transform:uppercase; }
+        .ban-val { font-size:.9rem; font-weight:900; color:#334155; }
+        .ban-val.main { color:#3b82f6; font-size:1rem; }
+        .ban-sep { width:1px; height:36px; background:#e2e8f0; flex-shrink:0; }
+
+        /* ADJUSTMENTS */
+        .adj-section { display:flex; flex-direction:column; gap:10px; }
+        .adj-title { font-size:.72rem; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:.5px; }
+        .adj-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+        .adj-group { display:flex; flex-direction:column; gap:6px; }
+        .adj-group.full { grid-column:1/-1; }
+        .adj-group label { display:flex; align-items:center; gap:5px; font-size:.75rem; font-weight:800; }
+        .green-lbl { color:#16a34a; }
+        .red-lbl   { color:#dc2626; }
+        .amber-lbl { color:#d97706; }
+        .inp-wrap { position:relative; }
+        .inp-wrap input { width:100%; padding:10px 40px 10px 12px; border-radius:12px; border:1.5px solid #e2e8f0; background:#f8fafc; font-size:.92rem; font-weight:800; color:#1e293b; outline:none; transition:border-color .2s; box-sizing:border-box; }
+        .inp-wrap input:focus { border-color:#3b82f6; background:white; }
+        .curr { position:absolute; left:10px; top:50%; transform:translateY(-50%); font-size:.65rem; font-weight:800; color:#94a3b8; background:#e2e8f0; padding:2px 5px; border-radius:4px; pointer-events:none; }
+
+        /* NOTES */
+        .notes-group { display:flex; flex-direction:column; gap:6px; }
+        .notes-group label { display:flex; align-items:center; gap:5px; font-size:.75rem; font-weight:800; color:#64748b; }
+        .notes-group textarea { padding:10px 14px; border-radius:12px; border:1.5px solid #e2e8f0; background:#f8fafc; font-size:.85rem; font-weight:600; color:#334155; outline:none; resize:vertical; transition:border-color .2s; font-family:inherit; }
+        .notes-group textarea:focus { border-color:#3b82f6; background:white; }
+
+        /* NET BOX */
+        .net-box { background:#1e293b; border-radius:18px; padding:18px 20px; display:flex; align-items:center; justify-content:space-between; }
+        .net-box.danger { background:#7f1d1d; }
+        .net-breakdown { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+        .nb-base  { font-size:.9rem; font-weight:800; color:#94a3b8; }
+        .nb-plus  { font-size:.9rem; font-weight:800; color:#4ade80; }
+        .nb-minus { font-size:.9rem; font-weight:800; color:#f87171; }
+        .net-result { display:flex; flex-direction:column; align-items:flex-end; gap:2px; }
+        .net-lbl { font-size:.62rem; font-weight:800; color:#64748b; text-transform:uppercase; }
+        .net-val { font-size:2rem; font-weight:900; color:white; line-height:1; }
+        .net-val em { font-size:1rem; font-weight:700; opacity:.7; font-style:normal; }
+
+        /* ERROR */
+        .err-msg { display:flex; align-items:center; gap:8px; background:#fef2f2; color:#b91c1c; padding:12px 14px; border-radius:12px; font-size:.82rem; font-weight:700; border:1px solid #fecaca; }
+
+        /* ACTIONS */
+        .modal-actions { display:flex; gap:10px; }
+        .btn-cancel { flex:1; padding:14px; border-radius:14px; border:1.5px solid #e2e8f0; background:white; color:#64748b; font-weight:800; cursor:pointer; transition:.2s; font-size:.9rem; }
+        .btn-cancel:hover { background:#f8fafc; border-color:#cbd5e1; }
+        .btn-pay { flex:2; padding:14px; border-radius:14px; border:none; background:linear-gradient(135deg,#2563eb,#4f46e5); color:white; font-weight:900; font-size:.95rem; cursor:pointer; transition:.2s; box-shadow:0 4px 14px rgba(37,99,235,.3); }
+        .btn-pay:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 8px 20px rgba(37,99,235,.4); }
+        .btn-pay:disabled { opacity:.5; cursor:not-allowed; transform:none; box-shadow:none; }
+        .spin { width:20px; height:20px; border:2px solid rgba(255,255,255,.3); border-top-color:white; border-radius:50%; animation:spin .8s linear infinite; margin:0 auto; }
+        @keyframes spin { to { transform:rotate(360deg); } }
       `}</style>
     </div>
   );

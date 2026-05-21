@@ -76,13 +76,36 @@ export default async function EmployeeProfilePage({
                 profile.fullName.charAt(0)
               )}
             </div>
+            <div className="profile-avatar-ring" />
           </div>
           <div className="profile-meta">
             <h1 className="profile-name">{profile.fullName}</h1>
             <p className="profile-role-text">{profile.jobTitle}</p>
           </div>
-          <div className="profile-actions">
-            {/* The duplicate Check-In button was removed to keep only the one inside the Attendance section */}
+        </div>
+
+        {/* Quick stats bar */}
+        <div className="profile-stats-bar">
+          <div className="profile-stat">
+            <span className="pstat-label">👔 المسمى الوظيفي</span>
+            <span className="pstat-value">{profile.jobTitle || '—'}</span>
+          </div>
+          <div className="pstat-divider" />
+          <div className="profile-stat">
+            <span className="pstat-label">📅 تاريخ التعيين</span>
+            <span className="pstat-value">
+              {profile.dateOfHiring ? new Date(profile.dateOfHiring).toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' }) : '—'}
+            </span>
+          </div>
+          <div className="pstat-divider" />
+          <div className="profile-stat">
+            <span className="pstat-label">💳 سعر الساعة</span>
+            <span className="pstat-value">{profile.hourlyRate?.toFixed(0)} ج.م / ساعة</span>
+          </div>
+          <div className="pstat-divider" />
+          <div className="profile-stat">
+            <span className="pstat-label">📱 رقم الهاتف</span>
+            <span className="pstat-value">{profile.phoneNumber || '—'}</span>
           </div>
         </div>
       </div>
@@ -95,3 +118,4 @@ export default async function EmployeeProfilePage({
     </div>
   );
 }
+

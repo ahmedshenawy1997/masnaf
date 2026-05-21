@@ -107,21 +107,22 @@ export default function LeavesClient({ allLeaves }: { allLeaves: any[] }) {
       <style jsx>{`
         .archive-widget {
           background: #fff;
-          border: 1px solid #e2e8f0;
+          border: 1.5px solid #E8EFFF;
           border-radius: 20px;
           overflow: hidden;
-          box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+          box-shadow: 0 4px 24px rgba(37, 99, 235, 0.07);
         }
         .archive-title {
           display: flex;
           align-items: center;
           gap: 10px;
-          padding: 18px 20px;
-          background: #1e293b;
+          padding: 18px 22px;
+          background: linear-gradient(135deg, #1E3A8A 0%, #2563EB 100%);
           color: #fff;
           font-size: 1.05rem;
           font-weight: 900;
-          letter-spacing: 0.5px;
+          font-family: 'Cairo', sans-serif;
+          letter-spacing: 0.3px;
         }
         .archive-body {
           padding: 12px;
@@ -144,8 +145,9 @@ export default function LeavesClient({ allLeaves }: { allLeaves: any[] }) {
           color: #475569;
         }
         .archive-year-btn.open {
-          background: #eff6ff;
-          color: #1d4ed8;
+          background: linear-gradient(135deg, #EFF6FF, #DBEAFE);
+          color: #1D4ED8;
+          border-color: #BFDBFE;
         }
         .archive-year-btn:hover:not(.open) {
           background: #f1f5f9;
@@ -176,11 +178,11 @@ export default function LeavesClient({ allLeaves }: { allLeaves: any[] }) {
           border-color: #cbd5e1;
         }
         .month-chip.active {
-          background: #1e293b;
+          background: linear-gradient(135deg, #2563EB, #1D4ED8);
           color: #fff;
-          border-color: #1e293b;
+          border-color: #1D4ED8;
           transform: translateY(-2px);
-          box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+          box-shadow: 0 4px 16px rgba(37,99,235,0.35);
         }
         .month-chip.future {
           opacity: 0.3;

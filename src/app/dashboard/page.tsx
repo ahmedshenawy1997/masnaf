@@ -119,6 +119,18 @@ export default async function DashboardPage() {
     }
   }
 
-  return <DashboardClient data={dashboardData} session={session} />;
+  // Fetch active notice
+  const activeNotice = await prisma.notice.findFirst({
+    where: { isActive: true },
+    orderBy: { createdAt: 'desc' }
+  });
+
+  return (
+    <DashboardClient
+      data={dashboardData}
+      session={session}
+      activeNotice={activeNotice ? { id: activeNotice.id, message: activeNotice.message } : null}
+    />
+  );
 }
 

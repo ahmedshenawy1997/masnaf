@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { Phone, IdCard, MapPin, Calendar, Edit2, FileText, ExternalLink, KeyRound, Eye, EyeOff, X, ShieldCheck } from 'lucide-react';
+import { Phone, IdCard, MapPin, Calendar, Edit2, FileText, ExternalLink, KeyRound, Eye, EyeOff, X, ShieldCheck, User } from 'lucide-react';
 import { useLanguage } from '@/lib/LanguageContext';
 import { useRouter } from 'next/navigation';
 
@@ -273,6 +273,17 @@ export default function PersonalInfo({ profile, isAdmin }: { profile: any; isAdm
                 <span className="section-value">{new Date(profile.dateOfHiring).toLocaleDateString()}</span>
               </div>
             </div>
+            {isAdmin && profile.user?.username && (
+              <div className="info-item" style={{ background: '#fafaf7', border: '1px solid #fcd34d' }}>
+                <User size={18} style={{ color: '#d97706', flexShrink: 0 }} />
+                <div style={{ flex: 1 }}>
+                  <span className="section-label" style={{ color: '#92400e' }}>اسم المستخدم</span>
+                  <span className="section-value" style={{ fontFamily: 'monospace', letterSpacing: '0.5px' }}>
+                    {profile.user.username}
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
 
           {profile.idPhoto && (

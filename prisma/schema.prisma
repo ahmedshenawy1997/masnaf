@@ -163,3 +163,9 @@ model Notice {
   updatedAt DateTime @updatedAt
   adminId   String?
 }
+
+model JobCategory {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+}

@@ -19,6 +19,7 @@ export default withAuth(
     callbacks: {
       authorized: ({ token }) => !!token,
     },
+    secret: process.env.NEXTAUTH_SECRET || 'masnaf-prod-secret-xK9mP2qR7nL4',
   }
 );
 

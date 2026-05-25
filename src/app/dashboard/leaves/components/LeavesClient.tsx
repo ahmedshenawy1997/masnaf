@@ -189,6 +189,13 @@ export default function LeavesClient({ allLeaves }: { allLeaves: any[] }) {
           cursor: not-allowed;
           background: #f1f5f9;
         }
+
+        /* Mobile */
+        @media (max-width: 640px) {
+          .archive-title { font-size: 0.9rem; padding: 14px 16px; }
+          .months-grid { grid-template-columns: repeat(4, 1fr); }
+          .month-chip { font-size: 12px; padding: 8px 4px; }
+        }
       `}</style>
     </div>
   );

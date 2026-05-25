@@ -447,7 +447,7 @@ export default function PayrollPage() {
       )}
 
       <style jsx>{`
-        .pp { padding:24px; direction:rtl; animation:fadeUp .4s ease; }
+        .pp { padding:0; direction:rtl; animation:fadeUp .4s ease; }
         @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
 
         /* HEADER */
@@ -501,6 +501,24 @@ export default function PayrollPage() {
 
         /* CARDS */
         .cards-list { display:flex; flex-direction:column; gap:10px; }
+
+        /* MOBILE */
+        @media (max-width: 768px) {
+          .pp-header { gap:12px; margin-bottom:20px; }
+          .pp-title h1 { font-size:1.2rem; }
+          .pp-icon { width:42px; height:42px; border-radius:13px; }
+          .period-pick { padding:8px 12px; }
+          .stats-grid { grid-template-columns:repeat(2,1fr); gap:8px; }
+          .toolbar { flex-direction:column; align-items:stretch; }
+          .search-box { min-width:0; }
+          .filter-tabs { width:100%; justify-content:stretch; }
+          .tab { flex:1; }
+        }
+        @media (max-width: 480px) {
+          .stats-grid { grid-template-columns:1fr; }
+          .pp-title { gap:10px; }
+          .pp-title h1 { font-size:1.05rem; }
+        }
       `}</style>
     </div>
   );

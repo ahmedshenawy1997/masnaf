@@ -124,4 +124,6 @@
   .user-profile { gap: 0.5rem; }
   .header { padding: 0 0.75rem; }
   .lang-toggle span { display: none; }
+  .lang-toggle { padding: 0.4rem 0.6rem; }
+  .user-avatar { width: 30px; height: 30px; }
 }

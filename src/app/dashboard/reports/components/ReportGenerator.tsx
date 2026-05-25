@@ -489,7 +489,7 @@ export default function ReportGenerator({ employees }: { employees: any[] }) {
       )}
 
       <style jsx>{`
-        .rg { padding:24px; direction:rtl; animation:fadeUp .4s ease; }
+        .rg { padding:0; direction:rtl; animation:fadeUp .4s ease; }
         @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
 
         /* HEADER */
@@ -579,6 +579,24 @@ export default function ReportGenerator({ employees }: { employees: any[] }) {
         @media print {
           .rg-header, .type-cards, .filter-card, .result-actions { display:none !important; }
           .result-card { box-shadow:none; border:1px solid #e2e8f0; }
+        }
+
+        /* MOBILE */
+        @media (max-width: 768px) {
+          .rg-title-block h1 { font-size:1.2rem; }
+          .rg-icon { width:42px; height:42px; border-radius:13px; }
+          .type-cards { gap:7px; }
+          .type-card { padding:8px 12px; font-size:.78rem; }
+          .filter-card { padding:16px; }
+          .filter-grid { grid-template-columns:1fr; }
+          .result-header { flex-direction:column; align-items:flex-start; gap:12px; }
+          .result-actions { width:100%; }
+          .btn-excel, .btn-print { flex:1; justify-content:center; }
+        }
+        @media (max-width: 480px) {
+          .type-card span { display:none; }
+          .type-card { padding:10px; }
+          .type-cards { gap:5px; }
         }
       `}</style>
     </div>

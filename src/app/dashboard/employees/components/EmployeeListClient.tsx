@@ -285,7 +285,7 @@ export default function EmployeeListClient({ employees, query }: { employees: an
         .group-badge { padding:4px 12px; border-radius:8px; color:white; font-size:0.72rem; font-weight:900; font-family:'Cairo',sans-serif; }
 
         /* Grid */
-        .elp-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(288px,1fr)); gap:18px; }
+        .elp-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(min(288px,100%),1fr)); gap:18px; }
 
         /* Card */
         .emp-card { background:white; border-radius:24px; border:1px solid #E8EFFF; overflow:hidden; transition:.2s; box-shadow:0 4px 24px rgba(37,99,235,.07); display:flex; flex-direction:column; }
@@ -312,6 +312,24 @@ export default function EmployeeListClient({ employees, query }: { employees: an
 
         /* Empty */
         .elp-empty { text-align:center; padding:90px 20px; color:#CBD5E1; display:flex; flex-direction:column; align-items:center; gap:14px; font-size:0.95rem; font-weight:700; }
+
+        /* Mobile */
+        @media (max-width: 640px) {
+          .elp-header { flex-direction:column; align-items:flex-start; gap:10px; }
+          .elp-add-btn { width:100%; justify-content:center; }
+          .elp-title { font-size:1.35rem; }
+          .cat-tabs-wrap { gap:6px; padding:10px; }
+          .cat-tab { padding:6px 10px; font-size:.75rem; }
+          .group-header { padding:12px 14px; }
+        }
+        @media (max-width: 480px) {
+          .elp-title-icon { width:44px; height:44px; border-radius:14px; }
+          .elp-search-bar { padding:8px 14px; }
+          .emp-card-top { padding:16px 14px 10px; gap:12px; }
+          .emp-card-avatar { width:48px; height:48px; }
+          .emp-card-info { padding:4px 14px 14px; }
+          .emp-card-actions { padding:10px 12px; }
+        }
       `}</style>
     </div>
   );

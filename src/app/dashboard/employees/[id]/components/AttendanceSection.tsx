@@ -233,7 +233,7 @@ export default function AttendanceSection({
 
   return (
     <div className="attendance-container">
-      <div className="flex items-center justify-between mb-6">
+      <div className="att-header">
         <h2 className="section-title-custom m-0">
           <Clock size={22} className="text-primary" />
           {t('attendance_system')}
@@ -251,7 +251,7 @@ export default function AttendanceSection({
         </div>
       </div>
 
-      <div className="attendance-info mb-6 p-4 bg-background rounded-lg border border-border">
+      <div className="attendance-info">
         {activeAttendance ? (
           <div className="flex items-center gap-4">
             <div className="status-indicator pulses" />
@@ -364,8 +364,8 @@ export default function AttendanceSection({
 
       <style jsx>{`
         .table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
-        .table th { padding: 12px 16px; font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; border: none; text-align: start; }
-        .table td { padding: 16px; font-size: 0.85rem; font-weight: 600; color: #1e293b; background: #f8fafc; border-top: 1px solid #f1f5f9; border-bottom: 1px solid #f1f5f9; }
+        .table th { padding: 12px 16px; font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; border: none; text-align: start; white-space: nowrap; }
+        .table td { padding: 16px; font-size: 0.85rem; font-weight: 600; color: #1e293b; background: #f8fafc; border-top: 1px solid #f1f5f9; border-bottom: 1px solid #f1f5f9; white-space: nowrap; }
         .table td:first-child { border-left: 1px solid #f1f5f9; border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
         .table td:last-child { border-right: 1px solid #f1f5f9; border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
         .status-indicator { width: 12px; height: 12px; border-radius: 50%; background: #cbd5e1; }
@@ -392,6 +392,22 @@ export default function AttendanceSection({
         .cal-dot { width:6px; height:6px; border-radius:50%; margin-top:4px; }
         .cal-dot-green { background:#22c55e; }
         .cal-dot-red { background:#ef4444; }
+
+        /* Section header */
+        .att-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; gap:12px; flex-wrap:wrap; }
+
+        /* Status info box */
+        .attendance-info { margin-bottom:1.5rem; padding:1rem; background:var(--background); border-radius:var(--radius-lg); border:1px solid var(--border); }
+
+        /* Mobile adjustments */
+        @media (max-width: 480px) {
+          .att-header { flex-direction:column; align-items:flex-start; }
+          .att-header .flex { width:100%; }
+          .att-header .btn { flex:1; justify-content:center; }
+          .cal-cell { min-height:42px; }
+          .cal-day-num { font-size:12px; }
+          .table td, .table th { padding:10px 12px; }
+        }
       `}</style>
     </div>
   );

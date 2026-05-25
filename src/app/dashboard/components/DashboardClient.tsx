@@ -426,24 +426,26 @@ export default function DashboardClient({
           </div>
         </div>
 
-        <div className="quick-actions grid grid-cols-2 lg-grid-cols-4 mt-8 gap-4">
-          <h2 className="title col-span-full">{t('quick_access')}</h2>
-          <Link href={`/dashboard/employees/${data.profileId}`} className="action-card card">
-            <Users className="action-icon text-primary" />
-            <div className="action-text">{t('view_profile')}</div>
-          </Link>
-          <Link href={`/dashboard/employees/${data.profileId}#attendance`} className="action-card card">
-            <Clock className="action-icon text-success" />
-            <div className="action-text">{t('attendance')}</div>
-          </Link>
-          <Link href={`/dashboard/employees/${data.profileId}#leaves`} className="action-card card">
-            <FileText className="action-icon text-warning" />
-            <div className="action-text">{t('leaves')}</div>
-          </Link>
-          <Link href={`/dashboard/employees/${data.profileId}#medical`} className="action-card card">
-            <FileText className="action-icon text-danger" />
-            <div className="action-text">{t('medical_reports')}</div>
-          </Link>
+        <div className="quick-actions-grid mt-8">
+          <h2 className="title">{t('quick_access')}</h2>
+          <div className="qa-cards">
+            <Link href={`/dashboard/employees/${data.profileId}`} className="action-card card">
+              <Users className="action-icon text-primary" />
+              <div className="action-text">{t('view_profile')}</div>
+            </Link>
+            <Link href={`/dashboard/employees/${data.profileId}#attendance`} className="action-card card">
+              <Clock className="action-icon text-success" />
+              <div className="action-text">{t('attendance')}</div>
+            </Link>
+            <Link href={`/dashboard/employees/${data.profileId}#leaves`} className="action-card card">
+              <FileText className="action-icon text-warning" />
+              <div className="action-text">{t('leaves')}</div>
+            </Link>
+            <Link href={`/dashboard/employees/${data.profileId}#medical`} className="action-card card">
+              <FileText className="action-icon text-danger" />
+              <div className="action-text">{t('medical_reports')}</div>
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -523,12 +525,14 @@ export default function DashboardClient({
         </button>
       </div>
 
-      <div className="quick-actions grid grid-cols-2 lg-grid-cols-4 mt-8 gap-4">
-        <h2 className="title col-span-full">{t('quick_access')}</h2>
-        <Link href="/dashboard/employees" className="action-card card">
-          <Users className="action-icon text-primary" />
-          <div className="action-text">{t('employee_list')}</div>
-        </Link>
+      <div className="quick-actions-grid mt-8">
+        <h2 className="title">{t('quick_access')}</h2>
+        <div className="qa-cards">
+          <Link href="/dashboard/employees" className="action-card card">
+            <Users className="action-icon text-primary" />
+            <div className="action-text">{t('employee_list')}</div>
+          </Link>
+        </div>
       </div>
 
       {/* Modals */}

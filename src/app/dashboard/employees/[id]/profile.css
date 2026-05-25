@@ -162,10 +162,18 @@
   gap: 1.75rem;
   align-items: start;
 }
+
+/* On mobile: show main actions first, sidebar (info/salary) second */
+.profile-sidebar { order: 2; }
+.profile-main    { order: 1; }
+
 @media (min-width: 1100px) {
   .profile-grid {
     grid-template-columns: 360px 1fr;
   }
+  /* Desktop: restore natural order */
+  .profile-sidebar { order: unset; }
+  .profile-main    { order: unset; }
 }
 
 .sticky-sidebar {
@@ -225,22 +233,37 @@
   .profile-role-text { font-size: 0.875rem; }
   .profile-sections section { border-radius: 18px; padding: 18px; }
   .sticky-sidebar { position: static; }
-  .profile-stats-bar { gap: 8px; padding: 12px 16px; }
+  .profile-stats-bar {
+    gap: 8px;
+    padding: 12px 16px;
+    flex-wrap: wrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
   .pstat-divider  { display: none; }
   .profile-stat   { padding: 4px 10px; }
+  .profile-grid   { gap: 1.25rem; }
 }
 
 @media (max-width: 480px) {
   .profile-info-bar {
-    flex-direction: column;
-    align-items: flex-start;
-    margin-top: -32px;
+    flex-direction: row;
+    align-items: flex-end;
+    margin-top: -36px;
     padding: 0 0.85rem 1rem;
+    gap: 0.75rem;
   }
   .profile-avatar-wrapper { padding: 4px; border-radius: 22px; }
   .profile-avatar {
-    width: 84px; height: 84px;
-    font-size: 2.1rem; border-radius: 18px;
+    width: 80px; height: 80px;
+    font-size: 2rem; border-radius: 16px;
   }
-  .profile-name { font-size: 1.3rem; }
+  .profile-meta { padding-bottom: 0.25rem; }
+  .profile-name { font-size: 1.2rem; }
+  .profile-role-text { font-size: 0.8rem; }
+  .profile-grid { gap: 1rem; }
+  .profile-stats-bar { padding: 10px; gap: 4px; }
+  .profile-stat { padding: 4px 8px; }
+  .pstat-label { font-size: 0.6rem; }
+  .pstat-value { font-size: 0.8rem; }
 }

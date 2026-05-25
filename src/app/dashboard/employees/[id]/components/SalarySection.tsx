@@ -274,6 +274,17 @@ export default function SalarySection({
         .hist-toggle.open .h-arrow { transform:rotate(180deg); }
         .hist-body { border:1.5px solid #f1f5f9; border-radius:18px; padding:12px; background:white; animation:slideIn .3s ease; }
         @keyframes slideIn { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
+
+        /* ── MOBILE ── */
+        @media (max-width: 640px) {
+          .status-card { flex-wrap:wrap; gap:10px; }
+          .st-amount { font-size:1.5rem; }
+          .pay-btn { width:100%; justify-content:center; text-align:center; }
+          .formula { gap:6px; }
+          .f-block { min-width:90px; padding:10px; }
+          .f-num { font-size:.9rem; }
+          .result-num { font-size:1rem; }
+        }
       `}</style>
     </div>
   );

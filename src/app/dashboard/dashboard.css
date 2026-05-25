@@ -203,8 +203,23 @@
 .mt-8 { margin-top: 2rem; }
 .mb-6 { margin-bottom: 1.5rem; }
 
+/* === QUICK ACTIONS GRID === */
+.quick-actions-grid { margin-top: 2rem; }
+.quick-actions-grid .title { margin-bottom: 1rem; }
+
+.qa-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
 @media (min-width: 768px) {
   .lg-grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+  .qa-cards { grid-template-columns: repeat(4, 1fr); }
+}
+
+@media (max-width: 480px) {
+  .qa-cards { grid-template-columns: 1fr; gap: 0.75rem; }
 }
 
 /* === RESPONSIVE DASHBOARD === */
@@ -218,4 +233,6 @@
   .metric-icon { width: 44px; height: 44px; }
   .metric-value { font-size: 1.2rem; }
   .metric-label { font-size: 0.78rem; }
+  .metric-card { padding: 0.9rem 1rem; }
+  .action-card { padding: 1rem; }
 }

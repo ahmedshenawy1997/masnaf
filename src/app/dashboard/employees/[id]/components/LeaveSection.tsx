@@ -74,8 +74,8 @@ export default function LeaveSection({
   return (
     <div>
       {!hideHeader && (
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="title text-lg m-0">{t('leave_management')}</h2>
+        <div className="leave-header">
+          <h2 className="title" style={{ margin: 0, fontSize: '1.15rem' }}>{t('leave_management')}</h2>
           {!isAdmin && (
             <button onClick={() => setShowForm(!showForm)} className="btn btn-primary">
               {showForm ? t('cancel') : t('request_leave')}
@@ -177,10 +177,11 @@ export default function LeaveSection({
 
       <style jsx>{`
         .table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
-        .table th { padding: 12px 16px; font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; border: none; text-align: start; }
-        .table td { padding: 16px; font-size: 0.9rem; font-weight: 600; color: #1e293b; background: #f8fafc; border-top: 1px solid #f1f5f9; border-bottom: 1px solid #f1f5f9; }
+        .table th { padding: 12px 16px; font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; border: none; text-align: start; white-space: nowrap; }
+        .table td { padding: 16px; font-size: 0.9rem; font-weight: 600; color: #1e293b; background: #f8fafc; border-top: 1px solid #f1f5f9; border-bottom: 1px solid #f1f5f9; white-space: nowrap; }
         .table td:first-child { border-left: 1px solid #f1f5f9; border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
         .table td:last-child { border-right: 1px solid #f1f5f9; border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
+        .leave-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; gap:12px; flex-wrap:wrap; }
         .btn-icon {
           padding: 8px;
           border-radius: 10px;
@@ -193,6 +194,12 @@ export default function LeaveSection({
           transition: 0.2s;
         }
         .btn-icon:hover { background: #f8fafc; border-color: var(--primary); color: var(--primary); }
+
+        @media (max-width: 480px) {
+          .leave-header { flex-direction:column; align-items:flex-start; }
+          .leave-header .btn { width:100%; justify-content:center; }
+          .table td, .table th { padding:10px 12px; }
+        }
       `}</style>
     </div>
   );

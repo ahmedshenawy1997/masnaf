@@ -404,9 +404,18 @@ export default function AttendanceSection({
           .att-header { flex-direction:column; align-items:flex-start; }
           .att-header .flex { width:100%; }
           .att-header .btn { flex:1; justify-content:center; }
-          .cal-cell { min-height:42px; }
-          .cal-day-num { font-size:12px; }
+          .attendance-container { max-width:100%; overflow-x:hidden; }
+          .cal-mobile { max-width:100%; }
+          .cal-grid { overflow:hidden; }
+          .cal-cell { min-height:38px; }
+          .cal-weekday { padding:8px 0; font-size:9px; letter-spacing:0; }
+          .cal-day-num { font-size:11px; }
+          .cal-today .cal-day-num { width:24px; height:24px; font-size:11px; }
           .table td, .table th { padding:10px 12px; }
+        }
+        @media (max-width: 360px) {
+          .cal-cell { min-height:34px; }
+          .cal-day-num { font-size:10px; }
         }
       `}</style>
     </div>

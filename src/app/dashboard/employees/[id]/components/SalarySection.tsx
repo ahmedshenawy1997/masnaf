@@ -280,10 +280,11 @@ export default function SalarySection({
           .status-card { flex-wrap:wrap; gap:10px; }
           .st-amount { font-size:1.5rem; }
           .pay-btn { width:100%; justify-content:center; text-align:center; }
-          .formula { gap:6px; }
-          .f-block { min-width:90px; padding:10px; }
-          .f-num { font-size:.9rem; }
-          .result-num { font-size:1rem; }
+          .formula { flex-direction:column; gap:8px; }
+          .f-block { min-width:0; width:100%; padding:12px; }
+          .f-op { display:none; }
+          .f-result { min-width:0; width:100%; }
+          .result-num { font-size:1.1rem; }
         }
       `}</style>
     </div>

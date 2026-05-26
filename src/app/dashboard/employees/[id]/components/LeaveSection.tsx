@@ -85,7 +85,7 @@ export default function LeaveSection({
       )}
 
       {showForm && (
-        <form onSubmit={handleSubmit} className="card p-4 bg-background mb-6 border-primary">
+        <form onSubmit={handleSubmit} style={{ background:'var(--background)', borderRadius:'var(--radius-xl)', border:'1px solid var(--border)', padding:'1rem', marginBottom:'1.5rem' }}>
           <div className="grid md-grid-cols-3 gap-4 mb-4">
             <div className="form-group">
               <label className="form-label">{t('leave_type')}</label>

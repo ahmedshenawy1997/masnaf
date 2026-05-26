@@ -106,22 +106,33 @@ export default function SalarySection({
           {/* Rate block */}
           <div className="f-block">
             <div className="f-icon purple"><DollarSign size={18} /></div>
-            <div className="f-text">
+            <div className="f-text" style={{ flex: 1 }}>
               <span className="f-lbl">سعر الساعة</span>
               {editing ? (
                 <div className="rate-edit">
-                  <input type="number" value={newRate} autoFocus
-                    onChange={e => setNewRate(e.target.value)} />
+                  <input
+                    type="number"
+                    value={newRate}
+                    autoFocus
+                    onChange={e => setNewRate(e.target.value)}
+                    placeholder="0"
+                  />
                   <span className="curr">ر.س</span>
-                  <button className="r-save" onClick={saveRate} disabled={saving}><Check size={13} /></button>
-                  <button className="r-cancel" onClick={() => setEditing(false)}><X size={13} /></button>
+                  <button className="r-save" onClick={saveRate} disabled={saving}>
+                    <Check size={14} />
+                    <span>حفظ</span>
+                  </button>
+                  <button className="r-cancel" onClick={() => setEditing(false)}>
+                    <X size={14} />
+                  </button>
                 </div>
               ) : (
                 <div className="rate-view">
                   <span className="f-num purple">{profile.hourlyRate.toFixed(0)} ر.س</span>
                   {isAdmin && (
                     <button className="edit-rate-btn" onClick={() => setEditing(true)}>
-                      <Edit2 size={12} />
+                      <Edit2 size={13} />
+                      <span>تعديل</span>
                     </button>
                   )}
                 </div>
@@ -228,14 +239,16 @@ export default function SalarySection({
         .f-op { font-size:1.2rem; font-weight:900; color:#cbd5e1; flex-shrink:0; }
 
         /* Rate editing */
-        .rate-edit { display:flex; align-items:center; gap:5px; }
-        .rate-edit input { width:64px; padding:4px 8px; border:2px solid #7c3aed; border-radius:8px; font-weight:800; font-size:.9rem; outline:none; }
+        .rate-edit { display:flex; align-items:center; gap:5px; flex-wrap:wrap; }
+        .rate-edit input { width:72px; padding:5px 8px; border:2px solid #7c3aed; border-radius:8px; font-weight:800; font-size:.9rem; outline:none; }
         .curr { font-size:.68rem; font-weight:800; color:#94a3b8; }
-        .r-save   { display:flex; align-items:center; justify-content:center; width:26px; height:26px; background:#16a34a; color:white; border:none; border-radius:6px; cursor:pointer; }
-        .r-cancel { display:flex; align-items:center; justify-content:center; width:26px; height:26px; background:#f1f5f9; color:#94a3b8; border:none; border-radius:6px; cursor:pointer; }
-        .rate-view { display:flex; align-items:center; gap:8px; }
-        .edit-rate-btn { background:none; border:none; color:#94a3b8; cursor:pointer; padding:4px; border-radius:6px; display:flex; align-items:center; }
-        .edit-rate-btn:hover { background:#f1f5f9; color:#7c3aed; }
+        .r-save   { display:flex; align-items:center; gap:5px; padding:5px 10px; background:#16a34a; color:white; border:none; border-radius:8px; cursor:pointer; font-size:.78rem; font-weight:800; white-space:nowrap; }
+        .r-save:hover { background:#15803d; }
+        .r-cancel { display:flex; align-items:center; justify-content:center; width:28px; height:28px; background:#f1f5f9; color:#94a3b8; border:none; border-radius:8px; cursor:pointer; }
+        .r-cancel:hover { background:#e2e8f0; color:#64748b; }
+        .rate-view { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+        .edit-rate-btn { display:flex; align-items:center; gap:4px; background:#f5f3ff; border:1.5px solid #ddd6fe; color:#7c3aed; cursor:pointer; padding:5px 10px; border-radius:8px; font-size:.75rem; font-weight:800; white-space:nowrap; transition:.2s; }
+        .edit-rate-btn:hover { background:#ede9fe; border-color:#c4b5fd; }
 
         .f-result { display:flex; flex-direction:column; gap:3px; flex:1; min-width:110px; padding:12px 14px; background:linear-gradient(135deg,#f0fdf4,#dcfce7); border-radius:14px; border:1px solid #bbf7d0; }
         .result-num { font-size:1.2rem; font-weight:900; color:#15803d; }

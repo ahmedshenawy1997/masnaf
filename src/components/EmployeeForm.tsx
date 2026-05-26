@@ -118,17 +118,17 @@ export default function EmployeeForm() {
       <form onSubmit={handleSubmit} className="employee-form bg-white">
         
         {/* Header decoration */}
-        <div className="bg-primary/5 p-8 border-b border-primary/10">
-          <h2 className="text-2xl font-black text-primary mb-2">{t('add_employee')}</h2>
-          <p className="text-sm font-bold text-primary/40 uppercase tracking-widest">{t('register_title')}</p>
+        <div style={{ background: 'rgba(37,99,235,0.04)', padding: '1.25rem 1.5rem', borderBottom: '1px solid rgba(37,99,235,0.08)' }}>
+          <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: 'var(--primary)', margin: '0 0 4px' }}>{t('add_employee')}</h2>
+          <p style={{ fontSize: '0.72rem', fontWeight: 700, color: 'rgba(37,99,235,0.45)', textTransform: 'uppercase', letterSpacing: '2px', margin: 0 }}>{t('register_title')}</p>
         </div>
 
-        <div className="p-8 space-y-10">
+        <div style={{ padding: '1.25rem 1.5rem', display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
           
           {/* Section 1: Credentials */}
           <div className="form-section">
-            <h3 className="section-title-mod flex items-center gap-2 mb-6">
-              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary"><User size={18}/></div>
+            <h3 className="section-title-mod flex items-center gap-2" style={{ marginBottom: '1.25rem' }}>
+              <div style={{ width: 32, height: 32, borderRadius: 10, background: 'rgba(37,99,235,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)', flexShrink: 0 }}><User size={18}/></div>
               {t('account_credentials')}
             </h3>
             <div className="grid md-grid-cols-2 gap-6">
@@ -159,8 +159,8 @@ export default function EmployeeForm() {
 
           {/* Section 2: Personal */}
           <div className="form-section">
-            <h3 className="section-title-mod flex items-center gap-2 mb-6">
-               <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary"><IdCard size={18}/></div>
+            <h3 className="section-title-mod flex items-center gap-2" style={{ marginBottom: '1.25rem' }}>
+               <div style={{ width: 32, height: 32, borderRadius: 10, background: 'rgba(37,99,235,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)', flexShrink: 0 }}><IdCard size={18}/></div>
                {t('personal_info')}
             </h3>
             <div className="grid md-grid-cols-2 gap-6">
@@ -199,22 +199,22 @@ export default function EmployeeForm() {
 
           {/* Section 3: Salary */}
           <div className="form-section">
-            <h3 className="section-title-mod flex items-center gap-2 mb-6">
-               <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary"><DollarSign size={18}/></div>
+            <h3 className="section-title-mod flex items-center gap-2" style={{ marginBottom: '1.25rem' }}>
+               <div style={{ width: 32, height: 32, borderRadius: 10, background: 'rgba(37,99,235,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)', flexShrink: 0 }}><DollarSign size={18}/></div>
                {t('work_salary')}
             </h3>
-            <div className="form-group max-w-xs">
+            <div className="form-group" style={{ maxWidth: '280px' }}>
               <label className="form-label-mod">{t('hourly_rate')}</label>
               <input type="number" step="0.01" name="hourlyRate" className="form-input-mod" required placeholder="0.00" />
             </div>
           </div>
 
           {/* Section 4: DOCUMENTS UPLOAD */}
-          <div className="grid md-grid-cols-2 gap-10">
+          <div className="grid md-grid-cols-2 gap-6">
             {/* ID PHOTO */}
             <div className="form-section">
-              <h3 className="section-title-mod flex items-center gap-2 mb-6">
-                 <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary"><Camera size={18}/></div>
+              <h3 className="section-title-mod flex items-center gap-2" style={{ marginBottom: '1.25rem' }}>
+                 <div style={{ width: 32, height: 32, borderRadius: 10, background: 'rgba(37,99,235,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)', flexShrink: 0 }}><Camera size={18}/></div>
                  {t('id_photo')}
               </h3>
               <div className="upload-container">
@@ -235,8 +235,8 @@ export default function EmployeeForm() {
 
             {/* HEALTH CERTIFICATE */}
             <div className="form-section">
-              <h3 className="section-title-mod flex items-center gap-2 mb-6">
-                 <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center text-green-600"><Check size={18}/></div>
+              <h3 className="section-title-mod flex items-center gap-2" style={{ marginBottom: '1.25rem' }}>
+                 <div style={{ width: 32, height: 32, borderRadius: 10, background: 'rgba(16,185,129,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#10b981', flexShrink: 0 }}><Check size={18}/></div>
                  {t('health_certificate')}
               </h3>
               <div className="upload-container">

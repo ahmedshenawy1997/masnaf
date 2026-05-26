@@ -114,9 +114,24 @@
   gap: 1rem;
 }
 
+/* col-span for 2-col grid on tablet+ */
+.col-span-2 { grid-column: span 1; }
+@media (min-width: 480px) {
+  .col-span-2 { grid-column: span 2; }
+}
+
 @media (max-width: 480px) {
   .register-grid {
     grid-template-columns: 1fr;
+  }
+  .register-card {
+    padding: 1.25rem 1rem;
+  }
+  .register-container {
+    padding: 3.5rem 0.75rem;
+  }
+  .register-header-fix {
+    padding: 0 0.75rem;
   }
 }
 

@@ -4,9 +4,15 @@ import bcrypt from "bcryptjs";
 import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 import { existsSync } from 'fs';
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 export async function POST(req: Request) {
   try {
+    const session = await getServerSession(authOptions);
+    if (!session || (session.user.role !== 'SUPERADMIN' && session.user.role !== 'ADMIN')) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const formData = await req.formData();
     console.log("Public Register: Received keys:", Array.from(formData.keys()));
     

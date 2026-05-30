@@ -2,7 +2,12 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 
-export async function GET() {
+export async function GET(req: Request) {
+  const secret = new URL(req.url).searchParams.get('secret');
+  if (!secret || secret !== process.env.SETUP_SECRET) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
+
   try {
     // Create all tables using raw SQL
     await prisma.$executeRawUnsafe(`
@@ -245,10 +250,7 @@ export async function GET() {
 
     return NextResponse.json({
       success: true,
-      message: 'Database setup complete! Tables created and admin user ready.',
-      username: 'admin',
-      password: 'adminpassword',
-      role: 'SUPERADMIN',
+      message: 'Database setup complete!',
     });
   } catch (error) {
     console.error('Setup error:', error);
